@@ -2,8 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
 <title>Bliźniaczy płomień</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
@@ -15,11 +14,12 @@
 
   *{box-sizing:border-box; margin:0; padding:0; transition: all 0.3s ease;}
   body{
-    height:100vh; display:grid; place-items:center;
+    min-height:100vh; display:grid; place-items:center;
     font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     background: radial-gradient(circle at 10% 20%, rgba(122,167,255,0.12), transparent 10%),
                 linear-gradient(180deg,var(--bg1),var(--bg2));
     color:#0b2035;
+    padding:24px;
   }
 
   .card{
@@ -81,15 +81,13 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 </head>
-<!-- подключаем проверку -->
- <script src="auth.js"></script>
 <body>
   <div class="card" role="main" aria-labelledby="title">
     <div class="logo">Bliźniaczy płomień</div>
     <h1 id="title">Enter password</h1>
     <p class="lead">Please enter the password to access your files.</p>
 
-    <form id="gate">
+    <form id="gate" autocomplete="off">
       <input id="pw" type="password" placeholder="Password" autocomplete="off" required />
       <button id="btn" type="submit">Enter</button>
     </form>
@@ -99,46 +97,46 @@
   </div>
 
 <script>
-const PASSWORD = '3861';
-const TOKEN_KEY = 'auth_token';
-const TOKEN_TTL_MS = 30 * 60 * 1000; // 30 минут
+/*
+  Примечание: пароль хранится в JS на клиенте — это НЕ безопасно.
+  Пользователь может открыть исходник страницы и увидеть пароль.
+  Для реальной защиты нужно серверное хранение/аутентификация.
+*/
 
-function generateToken(){ return Math.random().toString(36).slice(2)+Date.now().toString(36); }
+(function(){
+  const PASSWORD = '3861';
+  const form = document.getElementById('gate');
+  const pwInput = document.getElementById('pw');
+  const errEl = document.getElementById('err');
 
-const form = document.getElementById('gate');
-const pwInput = document.getElementById('pw');
-const errEl = document.getElementById('err');
+  // Ссылка на Google Drive
+  const DRIVE_URL = 'https://drive.google.com/drive/folders/1qFhDZV8e9M0YzCT-oiWuq-1jmk7WdfMI?usp=sharing';
 
-form.addEventListener('submit', e=>{
-  e.preventDefault();
-  const pw = pwInput.value || '';
-  if(pw === PASSWORD){
-    const token = generateToken();
-    const expires = Date.now() + TOKEN_TTL_MS;
-    sessionStorage.setItem(TOKEN_KEY, JSON.stringify({token, expires}));
-    window.location.replace('main.html'); // replace, чтобы не оставалось в истории
-  } else {
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const pw = (pwInput.value || '').trim();
+    if(pw === PASSWORD){
+      // Перейти на Google Drive
+      window.location.href = DRIVE_URL;
+      return;
+    }
+    // Неправильный пароль — показать ошибку
     errEl.style.display = 'block';
-    setTimeout(()=>errEl.style.display='none',2200);
+    // небольшая анимация исчезновения
+    setTimeout(function(){ errEl.style.display = 'none'; }, 2200);
     pwInput.value = '';
     pwInput.focus();
-  }
-});
+  });
 
-// Проверка на случай, если кто-то уже на main.html
-if(window.location.pathname.endsWith('main.html')){
-  try{
-    const raw = sessionStorage.getItem(TOKEN_KEY);
-    if(!raw){ window.location.replace('index.html'); }
-    const obj = JSON.parse(raw);
-    if(!obj.token || !obj.expires || Date.now() > obj.expires){
-      sessionStorage.removeItem(TOKEN_KEY);
-      window.location.replace('index.html');
+  // также слушаем Enter в поле (на случай, если форма не сработает)
+  pwInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+      // предотвращаем двойную отправку — просто проигнорируем, т.к. submit уже обрабатывается
+      e.preventDefault();
+      form.dispatchEvent(new Event('submit', {cancelable: true, bubbles: true}));
     }
-  }catch(e){
-    window.location.replace('index.html');
-  }
-}
+  });
+})();
 </script>
 </body>
 </html>
