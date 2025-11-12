@@ -325,16 +325,20 @@ const weatherElKalisz = document.getElementById('weather-widget-kalisz');
 
 async function loadWeather(city, element, name) {
   try {
+    // Добавляем уникальный параметр для обхода кеша
     const res = await fetch(`https://wttr.in/${city}?format=3&_=${Date.now()}`);
-    const text = await res.text();
+    let text = await res.text();
     element.textContent = text.replace(city, name);
   } catch (e) {
     element.textContent = `Nie można pobrać pogody (${name})`;
   }
 }
 
+// Загружаем отдельно для каждого города
 loadWeather('Wroclaw', weatherElWroclaw, 'Wrocław');
-loadWeather('Kalisz', weatherElKalisz, 'Kalisz'); // <-- добавляем
+loadWeather('Kalisz', weatherElKalisz, 'Kalisz');
+
+
 
 
 
