@@ -2,143 +2,303 @@
 <html lang="pl">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>Bliźniaczy płomień</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BLIŹNIACZY PŁOMIEŃ</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
 
-  :root{
-    --bg1:#f6fbff; --bg2:#eef7ff; --card:#ffffff;
-    --muted:#6b7c93; --accent:#7aa7ff;
-  }
+:root {
+  --bg: #04070d;
+  --card-bg: rgba(10,20,30,0.85);
+  --accent: #00e0ff;
+  --accent2: #00ffa6;
+  --text: #e8f4ff;
+  --muted: #5c6a7d;
+  --gallery-gap: 10px;
+}
 
-  *{box-sizing:border-box; margin:0; padding:0; transition: all 0.3s ease;}
-  body{
-    min-height:100vh; display:grid; place-items:center;
-    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    background: radial-gradient(circle at 10% 20%, rgba(122,167,255,0.12), transparent 10%),
-                linear-gradient(180deg,var(--bg1),var(--bg2));
-    color:#0b2035;
-    padding:24px;
-  }
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  background: radial-gradient(circle at 20% 20%, #0c1525 0%, #000 100%);
+  color: var(--text);
+  overflow-x: hidden;
+  position: relative;
+}
 
-  .card{
-    width:360px; max-width:90vw; padding:28px; border-radius:16px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,251,255,0.95));
-    box-shadow: 0 12px 40px rgba(11,32,53,0.2);
-    text-align:center; border:1px solid rgba(11,32,53,0.04);
-    transform: scale(0.9); opacity:0; animation: fadeIn 0.8s forwards;
-  }
+body::before, body::after {
+  content:'';
+  position: absolute;
+  top:0; left:0;
+  width:200%;
+  height:200%;
+  z-index:1;
+  pointer-events:none;
+}
+body::before {
+  background: repeating-linear-gradient(
+    120deg, rgba(0,255,180,0.08) 0px, rgba(0,255,180,0.08) 1px,
+    transparent 1px, transparent 6px
+  );
+  filter: blur(1px);
+  animation: scan 20s linear infinite;
+}
+body::after {
+  background: repeating-linear-gradient(
+    60deg, rgba(0,224,255,0.08) 0px, rgba(0,224,255,0.08) 1px,
+    transparent 1px, transparent 6px
+  );
+  filter: blur(1px);
+  animation: scan 20s linear infinite reverse;
+}
+@keyframes scan { to { transform: translateY(100px); } }
 
-  @keyframes fadeIn{ to{ transform: scale(1); opacity:1; } }
+.card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 380px;
+  max-width: 95vw;
+  padding: 36px 20px;
+  border-radius: 16px;
+  background: var(--card-bg);
+  backdrop-filter: blur(14px) saturate(160%) contrast(120%);
+  border:1px solid rgba(0,255,200,0.15);
+  box-shadow:0 0 25px rgba(0,255,200,0.1);
+  text-align:center;
+  opacity:0;
+  animation: fadeIn 0.8s ease forwards;
+  transition: all 0.3s ease;
+}
+.card:hover {
+  box-shadow: 
+    0 0 10px rgba(29, 255, 255, 0.205),
+    0 0 30px rgba(0,255,180,0.15);
+  transform: translate(-50%, -50%) scale(1.02);
+}
 
-  .logo{
-    width:100%; height:auto; padding:14px 8px;
-    border-radius:14px; margin:0 auto 18px;
-    display:grid; place-items:center;
-    background:linear-gradient(135deg,var(--accent), #b8d7ff);
-    color:white; font-weight:700; font-size:16px;
-    text-align:center; line-height:1.2; word-wrap: break-word;
-    box-shadow: 0 6px 18px rgba(122,167,255,0.2);
-    transform: translateY(-10px); animation: logoDrop 0.8s forwards;
-  }
+.logo {
+  font-weight:700;
+  font-size:18px;
+  letter-spacing:1px;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #00e0ff, #00ffa6, #00e0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: glowGradient 3s infinite linear;
+  margin-bottom:20px;
+}
+@keyframes glowGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
-  @keyframes logoDrop{ to{ transform: translateY(0); } }
+h1 { font-size:18px; margin-bottom:8px; color: var(--text); }
+p.lead { font-size:13px; color: var(--muted); margin-bottom:22px; }
 
-  h1{margin:0 0 10px;font-size:18px; color:#0b2035;}
-  p.lead{margin:0 0 18px;color:var(--muted);font-size:13px;}
+input[type="password"] {
+  width: 100%;
+  padding:12px 14px;
+  border-radius:10px;
+  background: rgba(0,15,25,0.6);
+  border:1px solid rgba(0,255,255,0.25);
+  color: var(--accent);
+  font-size:15px;
+  outline:none;
+  text-align:center;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+input[type="password"]::placeholder { color: rgba(0,255,255,0.25); }
+input[type="password"]:focus { 
+  box-shadow:0 0 20px rgba(0,255,255,0.2); 
+  border-color:var(--accent2);
+}
 
-  input[type="password"]{
-    width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(11,32,53,0.06);
-    font-size:15px; outline:none; background:rgba(255,255,255,0.7);
-    backdrop-filter: blur(4px); transition: all 0.3s ease;
-  }
-  input[type="password"]:focus{
-    border-color: var(--accent); box-shadow: 0 0 12px rgba(122,167,255,0.3);
-  }
+button {
+  margin-top:18px;
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  font-weight:600;
+  color:#000;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  box-shadow:0 0 25px rgba(0,255,255,0.3);
+  cursor:pointer;
+  transition: all 0.3s ease;
+}
+button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: inset 0 0 10px rgba(0,255,255,0.2), 0 0 30px rgba(0,255,255,0.3);
+}
 
-  button{
-    margin-top:14px;width:100%;padding:12px;border-radius:12px;border:none;
-    font-weight:600;font-size:15px;cursor:pointer; background:var(--accent); color:#fff;
-    box-shadow: 0 6px 18px rgba(122,167,255,0.25); transition: all 0.3s ease;
-  }
-  button:hover{
-    transform: translateY(-3px); box-shadow: 0 10px 25px rgba(122,167,255,0.3);
-  }
+.error { display:none; color:#ff4a4a; margin-top:10px; font-size:13px; }
 
-  .note{margin-top:14px;font-size:12px;color:var(--muted)}
-  .error{color:#b83636;margin-top:10px;font-size:13px;display:none;}
+.note { margin-top:18px; font-size:12px; color: var(--muted); }
+.duration {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--accent2);
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 0.5px;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 6px rgba(0,255,180,0.6);
+}
 
-  @media (max-width: 400px){
-    .card{ padding:20px; border-radius:14px;}
-    .logo{font-size:14px; padding:10px;}
-    h1{font-size:16px;} p.lead{font-size:12px;}
-    input[type="password"]{padding:10px; font-size:14px;}
-    button{padding:10px; font-size:14px;}
-  }
+.terminal-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  padding: 12px 20px;
+  background: rgba(0,15,25,0.9);
+  border-top: 1px solid rgba(0,255,255,0.25);
+  color: var(--accent2);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+@media (max-width:768px){
+  .card { width: 90%; padding:28px 16px; }
+  h1{ font-size:16px; }
+  p.lead{ font-size:12px; }
+  input[type="password"]{ font-size:14px; padding:10px; }
+  button{ font-size:14px; padding:10px; }
+  .duration{ font-size:12px; }
+  .terminal-footer{ font-size:12px; height:60px; padding:10px; }
+}
+
+@media (max-width:480px){
+  .card { padding:22px 5px; }
+  h1{ font-size:14px; }
+  p.lead{ font-size:11px; }
+  input[type="password"]{ font-size:13px; padding:9px; }
+  button{ font-size:13px; padding:9px; }
+  .logo{ font-size:16px; }
+  .note{ font-size:11px; }
+  .duration{ font-size:11px; }
+  .terminal-footer{ font-size:11px; height:30px; padding:8px; }
+}
+
+@keyframes fadeIn { to { opacity:1; } }
 </style>
-<meta http-equiv="Cache-Control" content="no-store">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 </head>
 <body>
-  <div class="card" role="main" aria-labelledby="title">
-    <div class="logo">Bliźniaczy płomień</div>
-    <h1 id="title">Enter password</h1>
-    <p class="lead">Please enter the password to access your files.</p>
+<div class="card" role="main" aria-labelledby="title">
+  <div class="logo">BLIŹNIACZY PŁOMIEŃ</div>
+  <h1 id="title">AUTHORIZED ENTRY ONLY</h1>
+  <p class="lead">Enter your secret key to continue.</p>
 
-    <form id="gate" autocomplete="off">
-      <input id="pw" type="password" placeholder="Password" autocomplete="off" required />
-      <button id="btn" type="submit">Enter</button>
-    </form>
+  <form id="gate" autocomplete="off">
+    <input id="pw" type="password" placeholder="Enter key..." autocomplete="off" required />
+    <button type="submit">Authenticate</button>
+  </form>
 
-    <div class="error" id="err">Incorrect password</div>
-    <div class="note">Soft, private access. English only prompt.</div>
-  </div>
+  <div class="error" id="err">ACCESS DENIED</div>
+
+  <div class="note">© Bliźniaczy płomień • 01.09.2024</div>
+  <div class="duration" id="duration"></div>
+</div>
+
+<div class="terminal-footer" id="terminal-footer"></div>
 
 <script>
-/*
-  Примечание: пароль хранится в JS на клиенте — это НЕ безопасно.
-  Пользователь может открыть исходник страницы и увидеть пароль.
-  Для реальной защиты нужно серверное хранение/аутентификация.
-*/
-
 (function(){
   const PASSWORD = '3861';
   const form = document.getElementById('gate');
   const pwInput = document.getElementById('pw');
   const errEl = document.getElementById('err');
 
-  // Ссылка на Google Drive
-  const DRIVE_URL = 'https://drive.google.com/drive/folders/1qFhDZV8e9M0YzCT-oiWuq-1jmk7WdfMI?usp=sharing';
-
   form.addEventListener('submit', function(e){
     e.preventDefault();
-    const pw = (pwInput.value || '').trim();
+    const pw = (pwInput.value||'').trim();
     if(pw === PASSWORD){
-      // Перейти на Google Drive
-      window.location.href = DRIVE_URL;
+      // Перенаправление на Google Drive
+      window.location.href = 'https://drive.google.com/drive/folders/1qFhDZV8e9M0YzCT-oiWuq-1jmk7WdfMI';
       return;
     }
-    // Неправильный пароль — показать ошибку
-    errEl.style.display = 'block';
-    // небольшая анимация исчезновения
-    setTimeout(function(){ errEl.style.display = 'none'; }, 2200);
-    pwInput.value = '';
+    errEl.style.display='block';
+    setTimeout(()=>{ errEl.style.display='none'; },2000);
+    pwInput.value='';
     pwInput.focus();
   });
 
-  // также слушаем Enter в поле (на случай, если форма не сработает)
-  pwInput.addEventListener('keydown', function(e){
-    if(e.key === 'Enter'){
-      // предотвращаем двойную отправку — просто проигнорируем, т.к. submit уже обрабатывается
-      e.preventDefault();
-      form.dispatchEvent(new Event('submit', {cancelable: true, bubbles: true}));
+  const startDate = new Date('2024-09-01');
+  const durationEl = document.getElementById('duration');
+
+  function animateDuration() {
+    const now = new Date();
+    let years = now.getFullYear() - startDate.getFullYear();
+    let months = now.getMonth() - startDate.getMonth();
+    let days = now.getDate() - startDate.getDate();
+    if (days < 0) {
+      months--;
+      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      days += prevMonth.getDate();
     }
-  });
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+
+    let currentYears = 0, currentMonths = 0, currentDays = 0;
+    const steps = 60;
+    let step = 0;
+
+    const interval = setInterval(() => {
+      step++;
+      currentYears = Math.min(years, Math.floor(years * step / steps));
+      currentMonths = Math.min(months, Math.floor(months * step / steps));
+      currentDays = Math.min(days, Math.floor(days * step / steps));
+      durationEl.textContent = `Od początku: ${currentYears} rok${currentYears !== 1 ? 'i' : ''} ${currentMonths} miesiąc${currentMonths !== 1 ? 'y' : ''} ${currentDays} dzień${currentDays !== 1 ? 'y' : ''}`;
+      if (step >= steps) clearInterval(interval);
+    }, 20);
+  }
+
+  animateDuration();
+
+  const terminalEl = document.getElementById('terminal-footer');
+  const words = ["dzień dobry, dzień dobry halo", "i niech ci będzie - kocham cię", 
+  "bo bo", "suslik", "biegałem do ciebie, żeby się nie spóźnić",
+  "w samochodzie po filmie była magia",
+  "odnaleźliśmy się w takich warunkach",
+  "położysz nóżkę", "tak mi przykro", "wiem, co by wyszło", " jestes klasny",
+  "idziemy spać w naszym czasie", "kiedy porozmawiamy, bo chcę", "dobranoc", "idź spać", "mój czubek",
+   "ananasik", "antylopka", "a co zjemy?", 
+   "chcesz banana?", "przygotowałam ci jedzenie do pracy", "o Boże, ile kropli zostawiłeś","napijemy się kawy", "przybijemy?", "jesteś piękna", "tęsknię za tobą",
+  ];
+  let index = 0;
+  let charIndex = 0;
+
+  function typeWord() {
+    if(index >= words.length) index = 0;
+    const word = words[index];
+    terminalEl.textContent = word.slice(0, charIndex) + '_';
+    charIndex++;
+    if(charIndex > word.length){
+      charIndex = 0;
+      index++;
+      setTimeout(typeWord, 800);
+    } else {
+      setTimeout(typeWord, 50);
+    }
+  }
+
+  typeWord();
+
 })();
 </script>
 </body>
 </html>
-
 
