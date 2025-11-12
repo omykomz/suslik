@@ -107,7 +107,7 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
   position: relative;
   color: var(--accent2);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 15px; /* немного больше для читаемости */
+  font-size: 13px; /* немного больше для читаемости */
   white-space: nowrap;
   line-height: 1.2; /* чуть плотнее, но не слипается */
   padding-left: 2px; /* одинаковый левый отступ */
@@ -197,8 +197,6 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
 <div id="weather-container">
   <div id="weather-line">
     <span id="weather-widget">Ładowanie...</span>
-     <span class="divider">|</span>
-    <span id="weather-widget-kalisz">Ładowanie...</span>
   </div>
 </div>
 
@@ -316,11 +314,10 @@ animateDuration();
 
   // Погода
 const weatherElWroclaw = document.getElementById('weather-widget');
-const weatherElKalisz = document.getElementById('weather-widget-kalisz');
 
 async function loadWeather(city, element, name) {
   try {
-    const res = await fetch(`https://wttr.in/${city}?format=3`);
+    const res = await fetch(`https://wttr.in/${city}?format=3&_=${Date.now()}`);
     const text = await res.text();
     element.textContent = text.replace(city, name);
   } catch (e) {
@@ -329,7 +326,9 @@ async function loadWeather(city, element, name) {
 }
 
 loadWeather('Wroclaw', weatherElWroclaw, 'Wrocław');
-loadWeather('Kalisz', weatherElKalisz, 'Kalisz');
+
+
+
   // Меню
   const burgerIcon = document.getElementById('burger-icon');
   const sideMenu = document.getElementById('side-menu');
