@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
 <title>BLIŹNIACZY PŁOMIEŃ</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
@@ -25,6 +25,7 @@ html, body {
   color: var(--text);
   overflow-x: hidden;
   position: relative;
+  touch-action: manipulation; /* для мобільних, обмежує pinch/zoom */
 }
 
 body::before, body::after {
@@ -108,7 +109,7 @@ input[type="password"] {
   background: rgba(0,15,25,0.6);
   border:1px solid rgba(0,255,255,0.25);
   color: var(--accent);
-  font-size:16px; /* мінімум 16px для мобільних */
+  font-size:16px; /* >=16px для мобільних */
   outline:none;
   text-align:center;
   box-sizing: border-box;
@@ -133,7 +134,7 @@ button {
   box-shadow:0 0 25px rgba(0,255,255,0.3);
   cursor:pointer;
   transition: all 0.3s ease;
-  font-size:16px; /* для мобільних */
+  font-size:16px; /* >=16px для мобільних */
 }
 button:hover {
   filter: brightness(1.1);
@@ -221,6 +222,12 @@ button:hover {
   const form = document.getElementById('gate');
   const pwInput = document.getElementById('pw');
   const errEl = document.getElementById('err');
+
+  // Блокування pinch/zoom пальцями
+  document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
+  document.addEventListener('touchmove', function(e){
+    if(e.scale !== undefined && e.scale !== 1) e.preventDefault();
+  }, { passive: false });
 
   function openDriveFolder(folderId) {
     const httpsUrl = `https://drive.google.com/drive/folders/${folderId}`;
