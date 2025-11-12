@@ -85,6 +85,7 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
   color:var(--accent2); font-family:'JetBrains Mono', monospace; border-radius:0 0 12px 0; z-index:10;
   font-size:14px;
 }
+
 #weather-container {
   position: fixed;
   top: 0;
@@ -101,6 +102,11 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
 #weather-container * {
   pointer-events: auto; /* А кликабельные части внутри — работают */
 }
+.divider {
+  color: rgba(0,255,255,0.4);
+  font-weight: 400;
+  margin: 0 4px;
+}
 
 #weather-widget,
 #weather-widget-kalisz {
@@ -114,7 +120,6 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
   text-align: left; /* строгое выравнивание */
   width: 100%;
 }
-
 
 /* Бургер-меню */
 #burger-menu { position: fixed; top: 20px; right: 20px; z-index:30; }
@@ -197,6 +202,8 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
 <div id="weather-container">
   <div id="weather-line">
     <span id="weather-widget">Ładowanie...</span>
+    <span class="divider">|</span>
+    <span id="weather-widget-kalisz">Ładowanie...</span>
   </div>
 </div>
 
@@ -314,6 +321,7 @@ animateDuration();
 
   // Погода
 const weatherElWroclaw = document.getElementById('weather-widget');
+const weatherElKalisz = document.getElementById('weather-widget-kalisz');
 
 async function loadWeather(city, element, name) {
   try {
@@ -326,6 +334,7 @@ async function loadWeather(city, element, name) {
 }
 
 loadWeather('Wroclaw', weatherElWroclaw, 'Wrocław');
+loadWeather('Kalisz', weatherElKalisz, 'Kalisz'); // <-- добавляем
 
 
 
