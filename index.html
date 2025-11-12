@@ -80,10 +80,40 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
 }
 
 #weather-widget{
-  position:fixed; top:0; left:0; padding:8px 12px; background:rgba(10,20,30,0.85);
+  position:fixed; top:0; left:0; padding:8px 12px;
   color:var(--accent2); font-family:'JetBrains Mono', monospace; border-radius:0 0 12px 0; z-index:10;
   font-size:14px;
 }
+#weather-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  padding: 20px 10px;
+  box-sizing: border-box;
+  min-width: 180px;
+  pointer-events: none; /* Чтобы не мешала кликам по другим элементам */
+}
+#weather-container * {
+  pointer-events: auto; /* А кликабельные части внутри — работают */
+}
+
+#weather-widget,
+#weather-widget-kalisz {
+  position: relative;
+  color: var(--accent2);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px; /* немного больше для читаемости */
+  white-space: nowrap;
+  line-height: 1.2; /* чуть плотнее, но не слипается */
+  padding-left: 2px; /* одинаковый левый отступ */
+  text-align: left; /* строгое выравнивание */
+  width: 100%;
+}
+
 
 /* Бургер-меню */
 #burger-menu { position: fixed; top: 20px; right: 20px; z-index:30; }
@@ -161,7 +191,14 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
 </head>
 <body>
 
-<div id="weather-widget">Ładowanie pogody...</div>
+<div id="weather-container">
+  <div id="weather-line">
+    <span id="weather-widget">Ładowanie...</span>
+     <span class="divider">|</span>
+    <span id="weather-widget-kalisz">Ładowanie...</span>
+  </div>
+</div>
+
 
 <!-- Бургер-меню -->
 <div id="burger-menu">
@@ -245,18 +282,21 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
   typeWord();
 
   // Погода
-  const weatherEl = document.getElementById('weather-widget');
-  async function loadWeather(){
-    try{
-      const res = await fetch('https://wttr.in/Wroclaw?format=3');
-      const text = await res.text();
-      weatherEl.textContent = text.replace('Wroclaw', 'Wrocław');
-    }catch(e){
-      weatherEl.textContent = 'Nie można pobrać pogody';
-    }
-  }
-  loadWeather();
+const weatherElWroclaw = document.getElementById('weather-widget');
+const weatherElKalisz = document.getElementById('weather-widget-kalisz');
 
+async function loadWeather(city, element, name) {
+  try {
+    const res = await fetch(`https://wttr.in/${city}?format=3`);
+    const text = await res.text();
+    element.textContent = text.replace(city, name);
+  } catch (e) {
+    element.textContent = `Nie można pobrać pogody (${name})`;
+  }
+}
+
+loadWeather('Wroclaw', weatherElWroclaw, 'Wrocław');
+loadWeather('Kalisz', weatherElKalisz, 'Kalisz');
   // Меню
   const burgerIcon = document.getElementById('burger-icon');
   const sideMenu = document.getElementById('side-menu');
