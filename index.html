@@ -7,194 +7,92 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
 
-:root {
-  --bg: #04070d;
-  --card-bg: rgba(10,20,30,0.85);
-  --accent: #00e0ff;
-  --accent2: #00ffa6;
-  --text: #e8f4ff;
-  --muted: #5c6a7d;
+:root{
+  --bg:#04070d;
+  --card-bg:rgba(10,20,30,0.85);
+  --accent:#00e0ff;
+  --accent2:#00ffa6;
+  --text:#e8f4ff;
+  --muted:#5c6a7d;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: 'JetBrains Mono', monospace;
-  background: radial-gradient(circle at 20% 20%, #0c1525 0%, #000 100%);
-  color: var(--text);
-  overflow-x: hidden;
-  position: relative;
-  touch-action: manipulation; /* для мобільних, обмежує pinch/zoom */
+html,body{
+  margin:0;padding:0;height:100%;font-family:'JetBrains Mono',monospace;
+  background:radial-gradient(circle at 20% 20%, #0c1525 0%, #000 100%);
+  color:var(--text);overflow-x:hidden;position:relative;touch-action:manipulation;
 }
 
-body::before, body::after {
-  content: '';
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  pointer-events: none;
+body::before, body::after{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;
 }
-body::before {
-  background: repeating-linear-gradient(
-    120deg, rgba(0,255,180,0.08) 0px, rgba(0,255,180,0.08) 1px,
-    transparent 1px, transparent 6px
-  );
-  filter: blur(1px);
-  animation: scan 20s linear infinite;
+body::before{
+  background:repeating-linear-gradient(120deg, rgba(0,255,180,0.08) 0px, rgba(0,255,180,0.08) 1px, transparent 1px, transparent 6px);
+  filter:blur(1px);animation:scan 20s linear infinite;
 }
-body::after {
-  background: repeating-linear-gradient(
-    60deg, rgba(0,224,255,0.08) 0px, rgba(0,224,255,0.08) 1px,
-    transparent 1px, transparent 6px
-  );
-  filter: blur(1px);
-  animation: scan 20s linear infinite reverse;
+body::after{
+  background:repeating-linear-gradient(60deg, rgba(0,224,255,0.08) 0px, rgba(0,224,255,0.08) 1px, transparent 1px, transparent 6px);
+  filter:blur(1px);animation:scan 20s linear infinite reverse;
 }
-@keyframes scan { to { transform: translateY(100px); } }
+@keyframes scan{ to{ transform: translateY(100px);} }
 
-.card {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  width: 380px;
-  max-width: 90vw;
-  padding: 36px 20px;
-  border-radius: 16px;
-  background: var(--card-bg);
-  backdrop-filter: blur(14px) saturate(160%) contrast(120%);
-  border:1px solid rgba(0,255,200,0.15);
-  box-shadow:0 0 25px rgba(0,255,200,0.1);
-  text-align:center;
-  opacity:0;
-  animation: fadeIn 0.8s ease forwards;
-  transition: all 0.3s ease;
+.card{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;
+  width:380px;max-width:90vw;padding:36px 20px;border-radius:16px;
+  background:var(--card-bg);backdrop-filter:blur(14px) saturate(160%) contrast(120%);
+  border:1px solid rgba(0,255,200,0.15);box-shadow:0 0 25px rgba(0,255,200,0.1);
+  text-align:center;opacity:0;animation:fadeIn .8s ease forwards;transition:all .3s ease;
 }
-.card:hover {
-  box-shadow: 
-    0 0 10px rgba(29, 255, 255, 0.205),
-    0 0 30px rgba(0,255,180,0.15);
-  transform: translate(-50%, -50%) scale(1.02);
-}
+.card:hover{ transform:translate(-50%,-50%) scale(1.02); }
 
-.logo {
-  font-weight:700;
-  font-size:18px;
-  letter-spacing:1px;
-  text-transform: uppercase;
-  background: linear-gradient(90deg, #00e0ff, #00ffa6, #00e0ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: glowGradient 3s infinite linear;
-  margin-bottom:20px;
+.logo{ font-weight:700;font-size:18px;letter-spacing:1px;text-transform:uppercase;
+  background:linear-gradient(90deg,#00e0ff,#00ffa6,#00e0ff);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;animation:glowGradient 3s infinite linear;margin-bottom:20px;
 }
-@keyframes glowGradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
+@keyframes glowGradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
-h1 { font-size:18px; margin-bottom:8px; color: var(--text); }
-p.lead { font-size:13px; color: var(--muted); margin-bottom:22px; }
+h1{font-size:18px;margin-bottom:8px;color:var(--text)}
+p.lead{font-size:13px;color:var(--muted);margin-bottom:22px}
 
-input[type="password"] {
-  width: 100%;
-  max-width: 100%;
-  padding:12px 14px;
-  border-radius:10px;
-  background: rgba(0,15,25,0.6);
-  border:1px solid rgba(0,255,255,0.25);
-  color: var(--accent);
-  font-size:16px; /* >=16px для мобільних */
-  outline:none;
-  text-align:center;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
+input[type="password"]{
+  width:100%;max-width:100%;padding:12px 14px;border-radius:10px;
+  background:rgba(0,15,25,0.6);border:1px solid rgba(0,255,255,0.25);
+  color:var(--accent);font-size:16px;outline:none;text-align:center;box-sizing:border-box;
+  transition:all .3s ease;
 }
-input[type="password"]::placeholder { color: rgba(0,255,255,0.25); }
-input[type="password"]:focus { 
-  box-shadow:0 0 20px rgba(0,255,255,0.2); 
-  border-color:var(--accent2);
-}
+input[type="password"]::placeholder{ color: rgba(0,255,255,0.25); }
+input[type="password"]:focus{ box-shadow:0 0 20px rgba(0,255,255,0.2); border-color:var(--accent2); }
 
-button {
-  margin-top:18px;
-  width: 100%;
-  max-width: 100%;
-  padding:12px;
-  border-radius:10px;
-  border:none;
-  font-weight:600;
-  color:#000;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
-  box-shadow:0 0 25px rgba(0,255,255,0.3);
-  cursor:pointer;
-  transition: all 0.3s ease;
-  font-size:16px; /* >=16px для мобільних */
+button{
+  margin-top:18px;width:100%;max-width:100%;padding:12px;border-radius:10px;border:none;
+  font-weight:600;color:#000;background:linear-gradient(90deg,var(--accent),var(--accent2));
+  box-shadow:0 0 25px rgba(0,255,255,0.3);cursor:pointer;transition:all .3s ease;font-size:16px;
 }
-button:hover {
-  filter: brightness(1.1);
-  transform: translateY(-2px);
-  box-shadow: inset 0 0 10px rgba(0,255,255,0.2), 0 0 30px rgba(0,255,255,0.3);
-}
+button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
 
-.error { display:none; color:#ff4a4a; margin-top:10px; font-size:13px; }
+.error{ display:none;color:#ff4a4a;margin-top:10px;font-size:13px }
 
-.note { margin-top:18px; font-size:12px; color: var(--muted); }
-.duration {
-  margin-top: 12px;
-  font-size: 13px;
-  color: var(--accent2);
-  font-weight: 500;
-  text-align: center;
-  letter-spacing: 0.5px;
-  font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 6px rgba(0,255,180,0.6);
-}
+.note{ margin-top:18px;font-size:12px;color:var(--muted) }
+.duration{ margin-top:12px;font-size:13px;color:var(--accent2);font-weight:500;text-align:center;letter-spacing:0.5px;text-shadow:0 0 6px rgba(0,255,180,0.6) }
 
-.terminal-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 50px;
-  padding: 12px 20px;
-  background: rgba(0,15,25,0.9);
-  border-top: 1px solid rgba(0,255,255,0.25);
-  color: var(--accent2);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  overflow: hidden;
-  box-sizing: border-box;
+.terminal-footer{
+  position:fixed;bottom:0;left:0;width:100%;height:50px;padding:12px 20px;background:rgba(0,15,25,0.9);
+  border-top:1px solid rgba(0,255,255,0.25);color:var(--accent2);font-family:'JetBrains Mono',monospace;font-size:14px;overflow:hidden;box-sizing:border-box;
 }
 
 @media (max-width:768px){
-  .card { width: 90%; padding:28px 16px; }
-  h1{ font-size:16px; }
-  p.lead{ font-size:12px; }
-  input[type="password"]{ font-size:16px; padding:10px; }
-  button{ font-size:16px; padding:10px; }
-  .duration{ font-size:12px; }
-  .terminal-footer{ font-size:12px; height:60px; padding:10px; }
+  .card{ width:90%; padding:28px 16px }
+  h1{ font-size:16px } p.lead{ font-size:12px }
+  input[type="password"]{ font-size:16px; padding:10px }
+  button{ font-size:16px; padding:10px }
+  .terminal-footer{ font-size:12px; height:60px; padding:10px }
 }
-
 @media (max-width:480px){
-  .card { padding:22px 5px; }
-  h1{ font-size:14px; }
-  p.lead{ font-size:11px; }
-  input[type="password"]{ font-size:16px; padding:9px; }
-  button{ font-size:16px; padding:9px; }
-  .logo{ font-size:16px; }
-  .note{ font-size:11px; }
-  .duration{ font-size:11px; }
-  .terminal-footer{ font-size:11px; height:30px; padding:8px; }
+  .card{ padding:22px 5px } h1{ font-size:14px } p.lead{ font-size:11px }
+  input[type="password"]{ font-size:16px; padding:9px } button{ font-size:16px; padding:9px }
+  .logo{ font-size:16px } .note{ font-size:11px } .duration{ font-size:11px } .terminal-footer{ font-size:11px; height:30px; padding:8px }
 }
 
-@keyframes fadeIn { to { opacity:1; } }
+@keyframes fadeIn{ to{ opacity:1 } }
 </style>
 </head>
 <body>
@@ -203,8 +101,9 @@ button:hover {
   <h1 id="title">AUTHORIZED ENTRY ONLY</h1>
   <p class="lead">Enter your secret key to continue.</p>
 
-  <form id="gate" autocomplete="off">
-    <input id="pw" type="password" placeholder="Enter key..." autocomplete="off" required />
+  <form id="gate" autocomplete="off" inputmode="numeric">
+    <!-- Скрытый ввод + подсказка браузеру открыть цифровую клавиатуру -->
+    <input id="pw" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="Enter key..." autocomplete="off" required />
     <button type="submit">Authenticate</button>
   </form>
 
@@ -223,66 +122,54 @@ button:hover {
   const pwInput = document.getElementById('pw');
   const errEl = document.getElementById('err');
 
-  // Блокування pinch/zoom пальцями
+  // Блокирование pinch/zoom
   document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
   document.addEventListener('touchmove', function(e){
-    if(e.scale !== undefined && e.scale !== 1) e.preventDefault();
+    if (e.scale !== undefined && e.scale !== 1) e.preventDefault();
   }, { passive: false });
+
+  // Попытка улучшить автоматическое появление цифровой клавиатуры:
+  // при фокусе переводим caret в input (не влияет на видимость), но основное — inputmode + pattern.
+  pwInput.addEventListener('focus', function(){
+    // небольшая задержка для надёжности на некоторых Android устройствах
+    setTimeout(() => { try { pwInput.setSelectionRange(pwInput.value.length, pwInput.value.length); } catch(e){} }, 50);
+  });
 
   function openDriveFolder(folderId) {
     const httpsUrl = `https://drive.google.com/drive/folders/${folderId}`;
     const androidIntent = `intent://drive.google.com/drive/folders/${folderId}#Intent;scheme=https;package=com.google.android.apps.docs;end`;
     const iosScheme = `googledrive://drive.google.com/drive/folders/${folderId}`;
     const ua = navigator.userAgent || navigator.vendor || window.opera;
-
-    if (/android/i.test(ua)) {
-      window.location.href = androidIntent;
-      setTimeout(() => { window.location.href = httpsUrl; }, 1200);
-      return;
-    }
-    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
-      window.location.href = iosScheme;
-      setTimeout(() => { window.location.href = httpsUrl; }, 1200);
-      return;
-    }
+    if (/android/i.test(ua)) { window.location.href = androidIntent; setTimeout(()=>{ window.location.href = httpsUrl; }, 1200); return; }
+    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) { window.location.href = iosScheme; setTimeout(()=>{ window.location.href = httpsUrl; }, 1200); return; }
     window.location.href = httpsUrl;
   }
 
   form.addEventListener('submit', function(e){
     e.preventDefault();
     const pw = (pwInput.value||'').trim();
-    if(pw === PASSWORD){
+    if (pw === PASSWORD) {
       openDriveFolder('1qFhDZV8e9M0YzCT-oiWuq-1jmk7WdfMI');
       return;
     }
-    errEl.style.display='block';
-    setTimeout(()=>{ errEl.style.display='none'; },2000);
-    pwInput.value='';
+    errEl.style.display = 'block';
+    setTimeout(()=>{ errEl.style.display = 'none'; }, 2000);
+    pwInput.value = '';
     pwInput.focus();
   });
 
+  // Duration animation
   const startDate = new Date('2024-09-01');
   const durationEl = document.getElementById('duration');
-
-  function animateDuration() {
+  function animateDuration(){
     const now = new Date();
     let years = now.getFullYear() - startDate.getFullYear();
     let months = now.getMonth() - startDate.getMonth();
     let days = now.getDate() - startDate.getDate();
-    if (days < 0) {
-      months--;
-      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-      days += prevMonth.getDate();
-    }
-    if (months < 0) {
-      years--;
-      months += 12;
-    }
-
+    if (days < 0) { months--; const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); days += prevMonth.getDate(); }
+    if (months < 0) { years--; months += 12; }
     let currentYears = 0, currentMonths = 0, currentDays = 0;
-    const steps = 60;
-    let step = 0;
-
+    const steps = 60; let step = 0;
     const interval = setInterval(() => {
       step++;
       currentYears = Math.min(years, Math.floor(years * step / steps));
@@ -292,42 +179,30 @@ button:hover {
       if (step >= steps) clearInterval(interval);
     }, 20);
   }
-
   animateDuration();
 
+  // Terminal footer typing
   const terminalEl = document.getElementById('terminal-footer');
-  const words = ["dzień dobry, dzień dobry halo", "i niech ci będzie - kocham cię", 
-  "bo bo", "suslik", "biegałem do ciebie, żeby się nie spóźnić",
-  "w samochodzie po filmie była magia",
-  "odnaleźliśmy się w takich warunkach",
-  "położysz nóżkę", "tak mi przykro", "wiem, co by wyszło",
-  "idziemy spać w naszym czasie", "kiedy porozmawiamy, bo chcę", "dobranoc", "idź spać", "mój czubek",
-   "ananasik", "antylopka", "a co zjemy?", 
-   "chcesz banana?", "przygotowałam ci jedzenie do pracy", "o Boże, ile kropli zostawiłeś","napijemy się kawy", "przybijemy?", "jesteś piękna", "tęsknię za tobą",
-  ];
-  let index = 0;
-  let charIndex = 0;
-
-  function typeWord() {
+  const words = ["dzień dobry, dzień dobry halo", "i niech ci będzie - kocham cię", "bo bo", "suslik", "biegałem do ciebie, żeby się nie spóźnić",
+    "w samochodzie po filmie była magia", "odnaleźliśmy się w takich warunkach", "położysz nóżkę", "tak mi przykro", "wiem, co by wyszło",
+    "idziemy spać w naszym czasie", "kiedy porozmawiamy, bo chcę", "dobranoc", "idź spać", "mój czubek", "ananasik", "antylopka", "a co zjemy?",
+    "chcesz banana?", "przygotowałam ci jedzenie do pracy", "o Boże, ile kropli zostawiłeś", "napijemy się kawy", "przybijemy?", "jesteś piękna", "tęsknię za tobą"];
+  let index = 0, charIndex = 0;
+  function typeWord(){
     if(index >= words.length) index = 0;
     const word = words[index];
     terminalEl.textContent = word.slice(0, charIndex) + '_';
     charIndex++;
-    if(charIndex > word.length){
-      charIndex = 0;
-      index++;
-      setTimeout(typeWord, 800);
-    } else {
-      setTimeout(typeWord, 50);
-    }
+    if(charIndex > word.length){ charIndex = 0; index++; setTimeout(typeWord, 800); } else { setTimeout(typeWord, 50); }
   }
-
   typeWord();
 
 })();
 </script>
 </body>
 </html>
+
+
 
 
 
