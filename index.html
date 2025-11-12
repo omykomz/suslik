@@ -79,15 +79,79 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
   border-top:1px solid rgba(0,255,255,0.25);color:var(--accent2);font-family:'JetBrains Mono',monospace;font-size:14px;overflow:hidden;box-sizing:border-box;
 }
 
+#weather-widget{
+  position:fixed; top:0; left:0; padding:8px 12px; background:rgba(10,20,30,0.85);
+  color:var(--accent2); font-family:'JetBrains Mono', monospace; border-radius:0 0 12px 0; z-index:10;
+  font-size:14px;
+}
+
+/* Бургер-меню */
+#burger-menu { position: fixed; top: 20px; right: 20px; z-index:30; }
+#burger-icon { width: 30px; height: 22px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; z-index:31; position: relative; }
+#burger-icon span { display: block; height: 4px; width: 100%; background: var(--accent2); border-radius: 2px; transition: 0.4s; }
+#burger-icon.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px);}
+#burger-icon.active span:nth-child(2) { opacity:0;}
+#burger-icon.active span:nth-child(3) { transform: rotate(-45deg) translate(6px,-6px); }
+
+/* Затемнение фона */
+#overlay {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(6px);
+  opacity:0; pointer-events:none;
+  transition: opacity 0.4s ease;
+  z-index:20;
+}
+#overlay.show { opacity:1; pointer-events:auto; }
+
+/* Меню справа */
+#side-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 50%;
+  height: 100%;
+  background: var(--card-bg);
+  backdrop-filter: blur(14px) saturate(160%) contrast(120%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 80px 20px 40px 20px;
+  gap: 16px;
+  transition: right 0.4s ease;
+  z-index: 25;
+  border-left: 1px solid rgba(0,255,200,0.15);
+  overflow-y: auto;
+}
+#side-menu.show { right: 0; }
+
+#side-menu a {
+  color: var(--accent2);
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  padding: 14px 10px;
+  border-radius: 12px;
+  background: rgba(0,255,255,0.1);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0,255,255,0.15);
+}
+#side-menu a:hover {
+  background: rgba(0,255,255,0.2);
+  transform: translateY(-2px);
+}
+
 @media (max-width:768px){
   .card{ width:90%; padding:28px 16px }
+  #side-menu{ width:60%; right:-100%; }
   h1{ font-size:16px } p.lead{ font-size:12px }
-  input[type="password"]{ font-size:16px; padding:10px }
-  button{ font-size:16px; padding:10px }
   .terminal-footer{ font-size:12px; height:60px; padding:10px }
 }
 @media (max-width:480px){
   .card{ padding:22px 5px } h1{ font-size:14px } p.lead{ font-size:11px }
+  #side-menu{ width:60%; right:-100%; padding:70px 15px; }
   input[type="password"]{ font-size:16px; padding:9px } button{ font-size:16px; padding:9px }
   .logo{ font-size:16px } .note{ font-size:11px } .duration{ font-size:11px } .terminal-footer{ font-size:11px; height:30px; padding:8px }
 }
@@ -96,19 +160,35 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
 </style>
 </head>
 <body>
+
+<div id="weather-widget">Ładowanie pogody...</div>
+
+<!-- Бургер-меню -->
+<div id="burger-menu">
+  <div id="burger-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <div id="overlay"></div>
+  <div id="side-menu">
+    <a href="https://www.e-podroznik.pl/rozklad-jazdy-bilety/wroclaw-kalisz" target="_blank">Bilety na pociąg</a>
+    <a href="https://www.booking.com/" target="_blank">Booking</a>
+    <a href="https://www.wroclaw.pl/" target="_blank">Wiadomości Wrocław</a>
+  </div>
+</div>
+
 <div class="card" role="main" aria-labelledby="title">
   <div class="logo">BLIŹNIACZY PŁOMIEŃ</div>
   <h1 id="title">AUTHORIZED ENTRY ONLY</h1>
-  <p class="lead">Enter your secret key to continue.</p>
+  <p class="lead">Wprowadź swój tajny kod, aby kontynuować.</p>
 
   <form id="gate" autocomplete="off" inputmode="numeric">
-    <!-- Скрытый ввод + подсказка браузеру открыть цифровую клавиатуру -->
-    <input id="pw" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="Enter key..." autocomplete="off" required />
+    <input id="pw" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="Wpisz kod..." autocomplete="off" required />
     <button type="submit">Authenticate</button>
   </form>
 
-  <div class="error" id="err">ACCESS DENIED</div>
-
+  <div class="error" id="err">DOSTĘP ODRZUCONY</div>
   <div class="note">© Bliźniaczy płomień • 01.09.2024</div>
   <div class="duration" id="duration"></div>
 </div>
@@ -116,93 +196,81 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
 <div class="terminal-footer" id="terminal-footer"></div>
 
 <script>
-(function(){
+(async function(){
   const PASSWORD = '3861';
   const form = document.getElementById('gate');
   const pwInput = document.getElementById('pw');
   const errEl = document.getElementById('err');
 
-  // Блокирование pinch/zoom
-  document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
-  document.addEventListener('touchmove', function(e){
-    if (e.scale !== undefined && e.scale !== 1) e.preventDefault();
-  }, { passive: false });
-
-  // Попытка улучшить автоматическое появление цифровой клавиатуры:
-  // при фокусе переводим caret в input (не влияет на видимость), но основное — inputmode + pattern.
-  pwInput.addEventListener('focus', function(){
-    // небольшая задержка для надёжности на некоторых Android устройствах
-    setTimeout(() => { try { pwInput.setSelectionRange(pwInput.value.length, pwInput.value.length); } catch(e){} }, 50);
-  });
-
-  function openDriveFolder(folderId) {
-    const httpsUrl = `https://drive.google.com/drive/folders/${folderId}`;
-    const androidIntent = `intent://drive.google.com/drive/folders/${folderId}#Intent;scheme=https;package=com.google.android.apps.docs;end`;
-    const iosScheme = `googledrive://drive.google.com/drive/folders/${folderId}`;
-    const ua = navigator.userAgent || navigator.vendor || window.opera;
-    if (/android/i.test(ua)) { window.location.href = androidIntent; setTimeout(()=>{ window.location.href = httpsUrl; }, 1200); return; }
-    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) { window.location.href = iosScheme; setTimeout(()=>{ window.location.href = httpsUrl; }, 1200); return; }
-    window.location.href = httpsUrl;
+  function openDriveFolder(folderId){
+    window.location.href = `https://drive.google.com/drive/folders/${folderId}`;
   }
 
-  form.addEventListener('submit', function(e){
+  form.addEventListener('submit', e=>{
     e.preventDefault();
     const pw = (pwInput.value||'').trim();
-    if (pw === PASSWORD) {
-      openDriveFolder('1qFhDZV8e9M0YzCT-oiWuq-1jmk7WdfMI');
-      return;
-    }
-    errEl.style.display = 'block';
-    setTimeout(()=>{ errEl.style.display = 'none'; }, 2000);
-    pwInput.value = '';
-    pwInput.focus();
+    if(pw === PASSWORD){ openDriveFolder('1qFhDZV8e9M0YzCT-oiWuq-1jmk7WdfMI'); return; }
+    errEl.style.display='block'; setTimeout(()=>{ errEl.style.display='none'; },2000);
+    pwInput.value=''; pwInput.focus();
   });
 
-  // Duration animation
+  // Duration
   const startDate = new Date('2024-09-01');
   const durationEl = document.getElementById('duration');
   function animateDuration(){
-    const now = new Date();
-    let years = now.getFullYear() - startDate.getFullYear();
-    let months = now.getMonth() - startDate.getMonth();
-    let days = now.getDate() - startDate.getDate();
-    if (days < 0) { months--; const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); days += prevMonth.getDate(); }
-    if (months < 0) { years--; months += 12; }
-    let currentYears = 0, currentMonths = 0, currentDays = 0;
-    const steps = 60; let step = 0;
-    const interval = setInterval(() => {
-      step++;
-      currentYears = Math.min(years, Math.floor(years * step / steps));
-      currentMonths = Math.min(months, Math.floor(months * step / steps));
-      currentDays = Math.min(days, Math.floor(days * step / steps));
-      durationEl.textContent = `Od początku: ${currentYears} rok${currentYears !== 1 ? 'i' : ''} ${currentMonths} miesiąc${currentMonths !== 1 ? 'y' : ''} ${currentDays} dzień${currentDays !== 1 ? 'y' : ''}`;
-      if (step >= steps) clearInterval(interval);
-    }, 20);
+    const now=new Date();
+    let years = now.getFullYear()-startDate.getFullYear();
+    let months = now.getMonth()-startDate.getMonth();
+    let days = now.getDate()-startDate.getDate();
+    if(days<0){ months--; const prevMonth=new Date(now.getFullYear(),now.getMonth(),0); days+=prevMonth.getDate();}
+    if(months<0){ years--; months+=12; }
+    durationEl.textContent=`Od początku: ${years} rok${years!==1?'i':''} ${months} miesiąc${months!==1?'y':''} ${days} dzień${days!==1?'y':''}`;
   }
   animateDuration();
 
-  // Terminal footer typing
-  const terminalEl = document.getElementById('terminal-footer');
-  const words = ["dzień dobry, dzień dobry halo", "i niech ci będzie - kocham cię", "bo bo", "suslik", "biegałem do ciebie, żeby się nie spóźnić",
-    "w samochodzie po filmie była magia", "odnaleźliśmy się w takich warunkach", "położysz nóżkę", "tak mi przykro", "wiem, co by wyszło",
-    "idziemy spać w naszym czasie", "kiedy porozmawiamy, bo chcę", "dobranoc", "idź spać", "mój czubek", "ananasik", "antylopka", "a co zjemy?",
-    "chcesz banana?", "przygotowałam ci jedzenie do pracy", "o Boże, ile kropli zostawiłeś", "napijemy się kawy", "przybijemy?", "jesteś piękna", "tęsknię za tobą"];
-  let index = 0, charIndex = 0;
-  function typeWord(){
-    if(index >= words.length) index = 0;
-    const word = words[index];
-    terminalEl.textContent = word.slice(0, charIndex) + '_';
+  // Terminal typing
+  const terminalEl=document.getElementById('terminal-footer');
+  const words=["dzień dobry, dzień dobry halo","i niech ci będzie - kocham cię","bo bo","suslik","biegałem do ciebie, żeby się nie spóźnić"];
+  let index=0,charIndex=0;
+  function typeWord(){ 
+    if(index>=words.length) index=0;
+    const word=words[index];
+    terminalEl.textContent=word.slice(0,charIndex)+'_';
     charIndex++;
-    if(charIndex > word.length){ charIndex = 0; index++; setTimeout(typeWord, 800); } else { setTimeout(typeWord, 50); }
+    if(charIndex>word.length){ charIndex=0; index++; setTimeout(typeWord,800);}else{setTimeout(typeWord,50);}
   }
   typeWord();
 
+  // Погода
+  const weatherEl = document.getElementById('weather-widget');
+  async function loadWeather(){
+    try{
+      const res = await fetch('https://wttr.in/Wroclaw?format=3');
+      const text = await res.text();
+      weatherEl.textContent = text.replace('Wroclaw', 'Wrocław');
+    }catch(e){
+      weatherEl.textContent = 'Nie można pobrać pogody';
+    }
+  }
+  loadWeather();
+
+  // Меню
+  const burgerIcon = document.getElementById('burger-icon');
+  const sideMenu = document.getElementById('side-menu');
+  const overlay = document.getElementById('overlay');
+
+  burgerIcon.addEventListener('click', ()=>{
+    burgerIcon.classList.toggle('active');
+    sideMenu.classList.toggle('show');
+    overlay.classList.toggle('show');
+  });
+
+  overlay.addEventListener('click', ()=>{
+    burgerIcon.classList.remove('active');
+    sideMenu.classList.remove('show');
+    overlay.classList.remove('show');
+  });
 })();
 </script>
 </body>
 </html>
-
-
-
-
-
