@@ -96,10 +96,10 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
   padding: 20px 10px;
   box-sizing: border-box;
   min-width: 180px;
-  pointer-events: none; /* Чтобы не мешала кликам по другим элементам */
+  pointer-events: none;
 }
 #weather-container * {
-  pointer-events: auto; /* А кликабельные части внутри — работают */
+  pointer-events: auto;
 }
 
 #weather-widget,
@@ -107,14 +107,13 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
   position: relative;
   color: var(--accent2);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 13px; /* немного больше для читаемости */
+  font-size: 13px;
   white-space: nowrap;
-  line-height: 1.2; /* чуть плотнее, но не слипается */
-  padding-left: 2px; /* одинаковый левый отступ */
-  text-align: left; /* строгое выравнивание */
+  line-height: 1.2;
+  padding-left: 2px;
+  text-align: left;
   width: 100%;
 }
-
 
 /* Бургер-меню */
 #burger-menu { position: fixed; top: 20px; right: 20px; z-index:30; }
@@ -174,8 +173,6 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
   transform: translateY(-2px);
 }
 
-
-
 @media (max-width:768px){
   .card{ width:90%; padding:28px 16px }
   #side-menu{ width:60%; right:-100%; }
@@ -200,7 +197,6 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
   </div>
 </div>
 
-
 <!-- Бургер-меню -->
 <div id="burger-menu">
   <div id="burger-icon">
@@ -213,7 +209,7 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
     <a href="https://www.wroclaw.pl/" >Wiadomości Wrocław</a>
     <a href="https://www.wroclaw.pl/go" >Wydarzenia</a>
     <a href="https://www.e-podroznik.pl/rozklad-jazdy-bilety/wroclaw-kalisz" >Bilety na pociąg</a>
-    <a href="https://helios.pl/wroclaw/kino-helios-magnolia/?utm_source=Veneo&utm_medium=google&utm_campaign=wroclaw&gad_source=1&gad_campaignid=21886276957&gbraid=0AAAAADhPA2B6D_qog2lCkpKTiIda1K34b&gclid=CjwKCAiA_dDIBhB6EiwAvzc1cFMeGwwlbKF_NzYYCAbP18yj8d5EnRL5izYWe3YXL953p_BsdL51lRoCioIQAvD_BwE" >Kino Helios</a>
+    <a href="https://helios.pl/wroclaw/kino-helios-magnolia/" >Kino Helios</a>
   </div>
 </div>
 
@@ -241,50 +237,24 @@ button:hover{ transform: translateY(-2px); filter:brightness(1.1); }
   const pwInput = document.getElementById('pw');
   const errEl = document.getElementById('err');
 
-  function openDriveFolder(folderId){
-    window.location.href = `https://drive.google.com/drive/folders/${folderId}`;
-  }
-
   form.addEventListener('submit', e=>{
     e.preventDefault();
     const pw = (pwInput.value||'').trim();
-    if(pw === PASSWORD){ openDriveFolder('1qFhDZV8e9M0YzCT-oiWuq-1jmk7WdfMI'); return; }
-    errEl.style.display='block'; setTimeout(()=>{ errEl.style.display='none'; },2000);
-    pwInput.value=''; pwInput.focus();
+    if(pw === PASSWORD){ 
+        window.location.href = 'main.html'; // переход на main.html
+        return; 
+    }
+    errEl.style.display='block'; 
+    setTimeout(()=>{ errEl.style.display='none'; },2000);
+    pwInput.value=''; 
+    pwInput.focus();
   });
 
-  // Duration с анимацией роста цифр
-const startDate = new Date('2024-09-01');
-const durationEl = document.getElementById('duration');
+  // Duration
+  const startDate = new Date('2024-09-01');
+  const durationEl = document.getElementById('duration');
 
-function animateValue(el, start, end, duration, suffix) {
-  let startTime = null;
-  function step(currentTime) {
-    if (!startTime) startTime = currentTime;
-    const progress = Math.min((currentTime - startTime) / duration, 1);
-    const value = Math.floor(progress * (end - start) + start);
-    el.dataset[suffix] = value;
-    el.textContent = `Od początku: ${el.dataset.years || 0} rok${(el.dataset.years != 1)?'i':''} ` +
-                     `${el.dataset.months || 0} miesiąc${(el.dataset.months != 1)?'y':''} ` +
-                     `${el.dataset.days || 0} dzień${(el.dataset.days != 1)?'y':''}`;
-    if (progress < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
-function animateDuration() {
-  const now = new Date();
-  let years = now.getFullYear() - startDate.getFullYear();
-  let months = now.getMonth() - startDate.getMonth();
-  let days = now.getDate() - startDate.getDate();
-  if (days < 0) { months--; const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); days += prevMonth.getDate(); }
-  if (months < 0) { years--; months += 12; }
-
-  animateValue(durationEl, 0, years, 1200, 'years');
-  animateValue(durationEl, 0, months, 1200, 'months');
-  animateValue(durationEl, 0, days, 1200, 'days');
-
-  setInterval(() => {
+  function animateDuration() {
     const now = new Date();
     let years = now.getFullYear() - startDate.getFullYear();
     let months = now.getMonth() - startDate.getMonth();
@@ -292,17 +262,14 @@ function animateDuration() {
     if (days < 0) { months--; const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); days += prevMonth.getDate(); }
     if (months < 0) { years--; months += 12; }
     durationEl.textContent = `Od początku: ${years} rok${years!==1?'i':''} ${months} miesiąc${months!==1?'y':''} ${days} dzień${days!==1?'y':''}`;
-  }, 1000);
-}
+  }
 
-animateDuration();
+  animateDuration();
+  setInterval(animateDuration, 1000);
 
   // Terminal typing
   const terminalEl=document.getElementById('terminal-footer');
-  const words=["dzień dobry, dzień dobry halo", "i niech ci będzie - kocham cię", "bo bo", "suslik", "biegałem do ciebie, żeby się nie spóźnić",
-    "w samochodzie po filmie była magia", "odnaleźliśmy się w takich warunkach", "położysz nóżkę", "tak mi przykro", "wiem, co by wyszło",
-    "idziemy spać w naszym czasie", "kiedy porozmawiamy, bo chcę", "dobranoc", "idź spać", "mój czubek", "ananasik", "antylopka", "a co zjemy?",
-    "chcesz banana?", "przygotowałam ci jedzenie do pracy", "o Boże, ile kropli zostawiłeś", "napijemy się kawy", "przybijemy?", "jesteś piękna", "tęsknię za tobą"];
+  const words=["dzień dobry, dzień dobry halo","i niech ci będzie - kocham cię","bo bo","suslik"];
   let index=0,charIndex=0;
   function typeWord(){ 
     if(index>=words.length) index=0;
@@ -314,21 +281,17 @@ animateDuration();
   typeWord();
 
   // Погода
-const weatherElWroclaw = document.getElementById('weather-widget');
-
-async function loadWeather(city, element, name) {
-  try {
-    const res = await fetch(`https://wttr.in/${city}?format=3&_=${Date.now()}`);
-    const text = await res.text();
-    element.textContent = text.replace(city, name);
-  } catch (e) {
-    element.textContent = `Nie można pobrać pogody (${name})`;
+  const weatherElWroclaw = document.getElementById('weather-widget');
+  async function loadWeather(city, element, name) {
+    try {
+      const res = await fetch(`https://wttr.in/${city}?format=3&_=${Date.now()}`);
+      const text = await res.text();
+      element.textContent = text.replace(city, name);
+    } catch (e) {
+      element.textContent = `Nie można pobrać pogody (${name})`;
+    }
   }
-}
-
-loadWeather('Wroclaw', weatherElWroclaw, 'Wrocław');
-
-
+  loadWeather('Wroclaw', weatherElWroclaw, 'Wrocław');
 
   // Меню
   const burgerIcon = document.getElementById('burger-icon');
@@ -350,3 +313,4 @@ loadWeather('Wroclaw', weatherElWroclaw, 'Wrocław');
 </script>
 </body>
 </html>
+
