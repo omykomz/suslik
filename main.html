@@ -33,83 +33,80 @@ body::after{
 }
 @keyframes scan{ to{ transform: translateY(120px);} }
 
-/* appbar */
+/* appbar - прежний размер */
 .appbar{
-  position:fixed;top:0;left:0;right:0;height:68px;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;z-index:40;
+  position:fixed;top:0;left:0;right:0;height:55px;display:flex;align-items:center;justify-content:space-between;padding:10px 24px;z-index:40;
   background: rgba(10,20,30,0.95); 
   border-bottom:1px solid rgba(0,255,200,0.06);
 }
 .brand{ display:flex;align-items:center;gap:12px; }
 .logo{ font-weight:700;font-size:16px;letter-spacing:1px;text-transform:uppercase; background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent; }
-.app-actions{ display:flex;align-items:center;gap:12px; }
-#weather-widget{ font-size:13px; color:var(--accent2); }
+.app-actions{ display:flex;align-items:center;gap:14px; }
+#weather-widget{ font-size:14px; color:var(--accent2); }
 
 /* burger menu */
 #burger-menu{ position:relative; }
 #burger-icon{ width:36px;height:26px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;z-index:45; }
-#burger-icon span{ height:4px;border-radius:3px;background:var(--accent2);transition:0.35s;display:block; }
+#burger-icon span{ height:3px;border-radius:2px;background:var(--accent2);transition:0.35s;display:block; }
 #burger-icon.active span:nth-child(1){ transform: rotate(45deg) translate(5px,5px); }
-#burger-icon.active span:nth-child(2){ opacity:0; transform: translateX(-10px); }
-#burger-icon.active span:nth-child(3){ transform: rotate(-45deg) translate(6px,-6px); }
+#burger-icon.active span:nth-child(2){ opacity:0; transform: translateX(-8px); }
+#burger-icon.active span:nth-child(3){ transform: rotate(-45deg) translate(5px,-5px); }
 
 /* overlay & side menu */
 #overlay{ position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);backdrop-filter: blur(6px);opacity:0;pointer-events:none;transition:opacity .4s;z-index:30; }
 #overlay.show{ opacity:1; pointer-events:auto; }
-#side-menu{ position:fixed; top:0; right:-100%; width:52%; max-width:420px; height:100%; background:var(--card-bg); backdrop-filter: blur(18px) saturate(160%) contrast(120%); border-left:1px solid rgba(0,255,200,0.12); padding:84px 18px 22px 18px; display:flex;flex-direction:column;gap:12px; transition:right .38s cubic-bezier(.2,.9,.2,1); z-index:35; overflow:auto; }
+#side-menu{ position:fixed; top:0; right:-100%; width:52%; max-width:420px; height:100%; background:var(--card-bg); backdrop-filter: blur(18px) saturate(160%) contrast(120%); border-left:1px solid rgba(0,255,200,0.12); padding:72px 16px 16px 16px; display:flex;flex-direction:column;gap:12px; transition:right .38s cubic-bezier(.2,.9,.2,1); z-index:35; overflow:auto; }
 #side-menu.show{ right:0; }
-#side-menu a{ color:var(--accent2); text-decoration:none; font-size:16px; font-weight:600; padding:12px; text-align:center; border-radius:10px; background: rgba(0,255,255,0.04); border:1px solid rgba(0,255,255,0.06); }
-#side-menu a:hover{ transform:translateY(-3px); background: rgba(0,255,255,0.08); }
+#side-menu a{ color:var(--accent2); text-decoration:none; font-size:14px; font-weight:600; padding:10px; text-align:center; border-radius:10px; background: rgba(0,255,255,0.04); border:1px solid rgba(0,255,255,0.06); }
+#side-menu a:hover{ transform:translateY(-2px); background: rgba(0,255,255,0.08); }
 
 /* main container */
-.app{ position:relative; z-index:2; padding:92px 20px 60px; min-height:100vh; display:flex;flex-direction:column;align-items:center; }
-.tiles{ width:100%; max-width:980px; display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; }
+.app{ position:relative; z-index:2; padding:88px 16px 50px; min-height:100vh; display:flex;flex-direction:column;align-items:center; }
+.tiles{ width:100%; max-width:980px; display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; }
 @media (max-width:1000px){ .tiles{ grid-template-columns: repeat(2, 1fr); } }
 @media (max-width:640px){ .tiles{ grid-template-columns: 1fr; } #side-menu{ width:70%; } }
 
 /* tiles */
-.tile{ position:relative; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(0,255,200,0.06); box-shadow: 0 8px 28px rgba(0,255,200,0.04); border-radius:18px; padding:18px; min-height:140px; display:flex; gap:12px; align-items:center; cursor:pointer; transition: transform .28s, box-shadow .28s; overflow:hidden; backdrop-filter: blur(10px) saturate(140%); }
-.tile .thumb{ width:86px; height:86px; border-radius:14px; overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, rgba(0,0,0,0.2), rgba(255,255,255,0.02)); }
+.tile{ position:relative; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(0,255,200,0.06); box-shadow: 0 6px 20px rgba(0,255,200,0.04); border-radius:14px; padding:14px; min-height:120px; display:flex; gap:10px; align-items:center; cursor:pointer; transition: transform .28s, box-shadow .28s; overflow:hidden; backdrop-filter: blur(10px) saturate(140%); }
+.tile .thumb{ width:70px; height:70px; border-radius:12px; overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, rgba(0,0,0,0.2), rgba(255,255,255,0.02)); }
 .tile .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-.tile .meta{ flex:1; display:flex; flex-direction:column; gap:6px; }
-.tile .title{ font-size:16px; font-weight:700; color:var(--accent); }
-.tile .desc{ font-size:13px; color:var(--muted); }
-.tile:hover{ transform: translateY(-4px) scale(1.01); box-shadow: 0 14px 40px rgba(0,255,200,0.08); }
-.tile:active{ transform: translateY(-2px) scale(.995); }
-.tile::before{ content:''; position:absolute; right:-40px; top:-40px; width:140px; height:140px; background: radial-gradient(circle at 20% 20%, rgba(0,224,255,0.08), transparent 30%); filter: blur(12px); pointer-events:none; }
-.tile.large { grid-column: span 2; min-height:180px; border:2px solid var(--accent2); box-shadow:0 12px 36px rgba(0,255,180,0.2); background: linear-gradient(180deg, rgba(0,255,180,0.1), rgba(0,255,255,0.05)); }
-@media (max-width:640px){ .tile.large{ grid-column: span 1; } .tile .thumb{ width:72px; height:72px; border-radius:12px; } }
+.tile .meta{ flex:1; display:flex; flex-direction:column; gap:4px; }
+.tile .title{ font-size:14px; font-weight:700; color:var(--accent); }
+.tile .desc{ font-size:12px; color:var(--muted); }
+.tile:hover{ transform: translateY(-2px) scale(1.01); box-shadow: 0 10px 28px rgba(0,255,200,0.06); }
+.tile:active{ transform: translateY(-1px) scale(.995); }
+.tile::before{ content:''; position:absolute; right:-30px; top:-30px; width:120px; height:120px; background: radial-gradient(circle at 20% 20%, rgba(0,224,255,0.08), transparent 30%); filter: blur(10px); pointer-events:none; }
+.tile.large { grid-column: span 2; min-height:160px; border:2px solid var(--accent2); box-shadow:0 10px 30px rgba(0,255,180,0.2); background: linear-gradient(180deg, rgba(0,255,180,0.1), rgba(0,255,255,0.05)); }
+@media (max-width:640px){ .tile.large{ grid-column: span 1; } .tile .thumb{ width:60px; height:60px; border-radius:10px; } }
 
 /* compact footer */
-.footer{
+.compact-footer{
   position:fixed;
-  bottom:0;
-  left:0;
+  bottom:0; left:0;
   width:100%;
-  height:36px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(0,15,25,0.95);
-  border-top:1px solid var(--accent2);
+  height:30px;
+  padding:6px 16px;
+  background:rgba(0,15,25,0.9);
+  border-top:1px solid rgba(0,255,255,0.25);
   color:var(--accent2);
-  font-weight:600;
-  font-size:14px;
-  letter-spacing:1px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  text-align:center;
+  display:flex;align-items:center;justify-content:center;
   z-index:40;
 }
 </style>
 </head>
 <body>
 
-<!-- appbar -->
+<!-- appbar (вернули прежний размер) -->
 <div class="appbar">
   <div class="brand">
     <div class="logo">BLIŹNIACZY PŁOMIEŃ</div>
-    <div style="margin-left:8px;color:var(--muted);font-size:13px"></div>
   </div>
   <div class="app-actions">
     <div id="weather-widget">Ładowanie pogody...</div>
-    <div id="burger-menu" style="margin-left:14px">
+    <div id="burger-menu">
       <div id="burger-icon" aria-label="menu" role="button" tabindex="0">
         <span></span><span></span><span></span>
       </div>
@@ -125,23 +122,19 @@ body::after{
   <a href="https://www.wroclaw.pl/go" target="_blank">Wydarzenia</a>
   <a href="https://www.e-podroznik.pl/rozklad-jazdy-bilety/wroclaw-kalisz" target="_blank">Bilety na pociąg</a>
   <a href="https://helios.pl/wroclaw/kino-helios-magnolia/" target="_blank">Kino Helios</a>
-  <a href="https://drive.google.com/drive/folders/1uTMYkq1ko_52yz66acpANh1_jEef2jWX" target="_blank" id="open-album">Album</a>
+  <a href="https://drive.google.com/drive/folders/1uTMYkq1ko_52yz66acpANh1_jEef2jWX" target="_blank">Album</a>
 </nav>
 
 <!-- main app -->
-<main class="app" role="main">
-  <!-- Наши моменты -->
-  <div class="tiles" aria-live="polite">
-<div class="tile large" tabindex="0" role="link" onclick="window.open('https://drive.google.com/drive/folders/1uTMYkq1ko_52yz66acpANh1_jEef2jWX', '_blank')">
-  <div class="thumb"><img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=60" alt="Gallery"></div>
-  <div class="meta">
-    <div class="title">Nasze Momenty</div>
-    <div class="desc">Nasze wspólne zdjęcia i piękne chwile — kliknij, aby otworzyć.</div>
-  </div>
-</div>
-
-  <!-- Все остальное -->
-  <div class="tiles" aria-live="polite" style="margin-top:20px;">
+<main class="app">
+  <div class="tiles">
+    <div class="tile large" tabindex="0" role="link" onclick="window.open('https://drive.google.com/drive/folders/1uTMYkq1ko_52yz66acpANh1_jEef2jWX', '_blank')">
+      <div class="thumb"><img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=60" alt="Gallery"></div>
+      <div class="meta">
+        <div class="title">Nasze Momenty</div>
+        <div class="desc">Nasze wspólne zdjęcia i piękne chwile — kliknij, aby otworzyć.</div>
+      </div>
+    </div>
     <div class="tile" tabindex="0" role="link" onclick="window.open('https://helios.pl/wroclaw/kino-helios-magnolia/','_blank')">
       <div class="thumb"><img src="https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?auto=format&fit=crop&w=400&q=60" alt="Cinema"></div>
       <div class="meta">
@@ -149,7 +142,6 @@ body::after{
         <div class="desc">Sprawdź repertuar i godziny seansów.</div>
       </div>
     </div>
-
     <div class="tile" tabindex="0" role="link" onclick="window.open('https://www.wroclaw.pl/','_blank')">
       <div class="thumb"><img src="https://images.unsplash.com/photo-1508385082359-f2d2f3b0e8b1?auto=format&fit=crop&w=400&q=60" alt="News"></div>
       <div class="meta">
@@ -157,7 +149,6 @@ body::after{
         <div class="desc">Lokalne wiadomości i aktualizacje.</div>
       </div>
     </div>
-
     <div class="tile" tabindex="0" role="link" onclick="window.open('https://www.wroclaw.pl/go','_blank')">
       <div class="thumb"><img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=400&q=60" alt="Events"></div>
       <div class="meta">
@@ -169,7 +160,7 @@ body::after{
 </main>
 
 <!-- компактный футер -->
-<div class="footer">MARCHENKO 2024</div>
+<div class="compact-footer">© Bliźniaczy płomień • 01.09.2024</div>
 
 <script>
 (async function(){
@@ -192,11 +183,9 @@ body::after{
     sideMenu.setAttribute('aria-hidden', sideMenu.classList.contains('show') ? 'false' : 'true');
   }
   overlay.addEventListener('click', ()=>{ burgerIcon.classList.remove('active'); overlay.classList.remove('show'); sideMenu.classList.remove('show'); sideMenu.setAttribute('aria-hidden','true'); });
-
-  document.querySelectorAll('.tile').forEach(t=>{
-    t.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') t.click(); });
-  });
+  document.querySelectorAll('.tile').forEach(t=>{ t.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') t.click(); }); });
 })();
 </script>
+
 </body>
 </html>
