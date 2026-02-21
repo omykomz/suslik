@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Urodzinowy Kvest 🎉</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap');
+body { margin:0; font-family:'Montserrat',sans-serif; background:#fdf6f0; color:#222; overflow:hidden; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+.quiz-container { background:#fff; padding:20px; border-radius:20px; width:95%; max-width:400px; box-shadow:0 10px 20px rgba(0,0,0,0.15); text-align:center; position:relative; }
+.screen { display:none; }
+.screen.active { display:block; }
+.welcome, .codeScreen .welcome { font-size:20px; margin-bottom:15px; }
+.start-btn, .codeScreen button { padding:14px 20px; border:none; border-radius:18px; background:#ff8ac4; color:#fff; font-weight:700; cursor:pointer; font-size:16px; box-shadow:0 4px 12px rgba(0,0,0,0.15); transition:transform 0.2s, background 0.3s; }
+.start-btn:hover, .codeScreen button:hover { transform:translateY(-2px); background:#ff4f9b; }
+#timer { font-size:24px; font-weight:700; margin:15px 0; }
+.question { font-size:20px; margin-bottom:15px; opacity:0; transform:translateY(20px); transition:transform 0.4s ease, opacity 0.4s ease; }
+.options button { display:block; width:100%; margin:8px 0; padding:14px; font-size:16px; border:none; border-radius:18px; cursor:pointer; background:#ff8ac4; color:#fff; font-weight:700; box-shadow:0 4px 12px rgba(0,0,0,0.15); transition:transform 0.2s, background 0.3s; }
+.options button:hover { transform:translateY(-2px); background:#ff4f9b; }
+.options button.correct { background:#3ddc97; animation:correctPulse 0.8s infinite alternate; }
+.options button.wrong { background:#e63946; animation:wrongShake 0.5s; }
+@keyframes correctPulse {0%{transform:scale(1);}100%{transform:scale(1.08);} }
+@keyframes wrongShake {0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}50%{transform:translateX(4px);}75%{transform:translateX(-4px);} }
+.progress-bar { width:100%; background:#eee; border-radius:15px; height:18px; margin:12px 0; overflow:hidden; }
+.progress-fill { height:100%; width:0%; text-align:center; color:#fff; line-height:18px; font-weight:bold; background:#ff8ac4; border-radius:15px; transition:width 0.5s ease; }
+.errors { margin:8px 0; font-size:20px; position:fixed; top:10px; left:50%; transform:translateX(-50%); }
+.heart { margin:0 3px; font-size:22px; color:#ff4f9b; display:inline-block; opacity:1; transition:opacity 0.5s; }
+.prize, .gameover { font-size:20px; animation:fadeIn 0.7s ease forwards; color:#222; position:relative; display:none; }
+.prize a { display:inline-block; margin-top:10px; color:#ff8ac4; font-weight:700; text-decoration:none; font-size:18px; }
+.gift-box { width:70px; height:70px; background:#ff8ac4; margin:15px auto; border-radius:15px; cursor:pointer; display:flex; justify-content:center; align-items:center; font-size:36px; color:#fff; transition:transform 0.3s; }
+.gift-box.open { transform:scale(1.2) rotate(-10deg); }
+button.restart { margin-top:12px; background:#ff8ac4; color:#fff; font-weight:700; border:none; padding:12px 18px; border-radius:18px; cursor:pointer; transition:transform 0.2s, background 0.3s; }
+button.restart:hover { transform:translateY(-2px); background:#ff4f9b; }
+@keyframes fadeIn { from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
+.confetti-piece { position:absolute; width:8px; height:8px; border-radius:50%; top:-10px; animation:fall linear infinite; opacity:0.9; }
+@keyframes fall { 0%{transform:translateY(0) rotate(0deg);}100%{transform:translateY(500px) rotate(360deg);} }
+.hint-container { margin:8px 0; display:flex; justify-content:center; flex-wrap:wrap; gap:6px; position:fixed; bottom:10px; left:50%; transform:translateX(-50%); width:90%; }
+.hint-btn { flex:1 1 22%; padding:10px; border:none; border-radius:12px; cursor:pointer; background:#3ddc97; color:#fff; font-weight:700; text-align:center; transition:opacity 0.3s; }
+.hint-btn.used { opacity:0; pointer-events:none; }
+@media(max-width:400px){ .question{font-size:18px;} .options button{font-size:15px; padding:12px;} .progress-fill{font-size:14px;} .errors{font-size:18px;} .hint-btn{flex:1 1 45%; padding:8px;} .welcome{font-size:18px;} }
+</style>
+</head>
+<body>
+<div class="quiz-container">
+
+  <!-- Стартовая страница с таймером -->
+  <div id="startScreen" class="screen active">
+    <div class="welcome">
+      🎉 Suslik, przygotowałem dla Ciebie coś. 
+      <div></div>
+      <div>Wcześniej nie da się rozpocząć gry, więc poczekaj do 24.02.2026 do 17:00. </div>
+      <div></div>
+      <div>Urodziny zaczynają się wkrótce!🎉</div>
+
+    </div>
+    <div id="timer">Ładowanie...</div>
+    <button class="start-btn" onclick="tryStart()">Rozpocznij</button>
+  </div>
+
+  <!-- Ввод кода -->
+  <div id="codeScreen" class="screen">
+    <div class="welcome">
+      🎉 Wszystkiego najlepszego z okazji urodzin! 🎉<br>
+      Aby rozpocząć quiz, wpisz 4-cyfrowy kod. Kod znajdziesz, gdy obejrzysz wideo — w różnych momentach będą się pojawiać liczby.
+Obejrzyj całe wideo i znajdziesz kod. Powodzenia 🙂 obejrzy   <a href="https://www.youtube.com/watch?v=f1atFOF5boo" target="_blank">tо wideo</a>.
+    </div>
+    <input type="text" id="userCode" placeholder="Wpisz kod" style="padding:12px; border-radius:12px; width:60%; margin:10px 0; font-size:16px;">
+    <br>
+    <button class="start-btn" onclick="checkCode()">Start quiz</button>
+  </div>
+
+  <!-- Викторина -->
+  <div id="quizScreen" class="screen">
+    <div class="question" id="question">Ładowanie pytania...</div>
+    <div class="options" id="options"></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill">0%</div></div>
+    <div class="errors" id="errors"></div>
+    <div class="hint-container">
+      <button class="hint-btn" id="hint1" onclick="useHint(0)">💡 Podpowiedź 1</button>
+      <button class="hint-btn" id="hint2" onclick="useHint(1)">💡 Podpowiedź 2</button>
+      <button class="hint-btn" id="hint3" onclick="useHint(2)">💡 Podpowiedź 3</button>
+      <button class="hint-btn" id="hint4" onclick="useHint(3)">💡 Podpowiedź 4</button>
+    </div>
+  </div>
+
+  <!-- Приз -->
+  <div id="prizeScreen" class="prize">
+    🎉 Gratulacje! Ukończyłaś quiz! 🎉
+    <div class="gift-box" id="giftBox" onclick="openGift()">🎁</div>
+    <div id="giftLink" style="display:none; margin-top:8px;">
+      <a href="https://youtube.com" target="_blank">Odbierz swój prezent</a>
+    </div>
+  </div>
+
+  <!-- Game over -->
+  <div id="gameoverScreen" class="gameover">
+    😢 Wszystkie życia skończyły się.<br>
+    <button class="restart" onclick="restartQuiz()">Spróbuj ponownie</button>
+  </div>
+
+</div>
+
+<script>
+// === Таймер до 24.02.2026 17:00 по польскому времени (CET/UTC+1) ===
+const targetDate = new Date('2026-02-20T17:00:00+01:00').getTime();
+const timerEl = document.getElementById('timer');
+
+let timerInterval = setInterval(()=>{
+  const now = new Date().getTime();
+  const diff = targetDate - now;
+  if(diff<=0){
+    clearInterval(timerInterval);
+    timerEl.innerText="🎉 Czas rozpocząć quiz!";
+  } else {
+    const d=Math.floor(diff/(1000*60*60*24));
+    const h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+    const m=Math.floor((diff%(1000*60*60))/(1000*60));
+    const s=Math.floor((diff%(1000*60))/1000);
+    timerEl.innerText=`${d}d ${h}h ${m}m ${s}s`;
+  }
+},1000);
+
+// === Старт кнопки ===
+function tryStart(){
+  const now = new Date().getTime();
+  if(now < targetDate){
+    alert("Jeszcze za wcześnie! Poczekaj do 24.02.2026 17:00");
+  } else {
+    document.getElementById('startScreen').classList.remove('active');
+    document.getElementById('codeScreen').classList.add('active');
+  }
+}
+
+// === Проверка кода ===
+const correctCode = "2442"; // замени на свой 4-значный код
+function checkCode(){
+  const userCode = document.getElementById('userCode').value;
+  if(userCode===correctCode){
+    document.getElementById('codeScreen').classList.remove('active');
+    document.getElementById('quizScreen').classList.add('active');
+    loadQuestion();
+  } else {
+    alert("Niepoprawny kod! Spróbuj ponownie.");
+  }
+}
+
+// === Quiz 102 вопроса ===
+const quiz = [
+{question:"Jakie było nasze tajne słowo, które tylko my rozumiemy?",options:["dzień dobry, dzień dobry, hallo","cześć","halo"],answer:0},
+{question:"Gdzie byłaś CCTV to co wysyłał ci?",options:["Filmy","Nic","comik"],answer:0},
+{question:"Nasza pierwsza wspólna kawa w aucie przy świeczkach – co powiedziałaś?",options:["coś mi dosypałeś","kocham cię","nic specjalnego"],answer:0},
+{question:"Jakie tradycje zaczęły się pojawiać później w pracy?",options:["wspólne blokowanie szlabanów","wspólne gotowanie","wspólne spanie w pracy"],answer:0},
+{question:"O której godzinie jechaliśmy na moto?",options:["21:00","18:00","19:30"],answer:0},
+{question:"Gdzie piliśmy kawę w ciągu dnia, gdzie już nas znali?",options:["w kantynie","w domu","w parku"],answer:0},
+{question:"Gdzie chowaliśmy się o 5:10?",options:["po klatkach WA8","w aucie","w pracy"],answer:0},
+{question:"Kto nas zobaczył na klatce schodowej?",options:["Koreańczyk","Tsalto","Nikt"],answer:0},
+{question:"Gdzie robiliśmy pikniki?",options:["na ogródku w pracy i w kawiarni na WA8","w mieszkaniu","w aucie"],answer:0},
+{question:"Jak jeździliśmy autem w nasze miejsca i co robiłaś z tyłu?",options:["spałaś na mnie, a ja głaskałem Twoje włosy","rozmawiałyśmy","słuchałyśmy muzyki"],answer:0},
+{question:"Gdzie kupiliśmy lody i zrobiliśmy piknik?",options:["na stacji","w parku","w domu"],answer:0},
+{question:"Co robiliśmy w weekend w pracy?",options:["oglądaliśmy filmy","piliśmy wódkę","robiliśmy zakupy"],answer:0},
+{question:"Gdzie był pocałunek, którego Tsalto nie zrozumiał?",options:["w szatni","w aucie","w mieszkaniu"],answer:0},
+{question:"Jak wracaliśmy z moto ja byl czerwonym i na posterynky bylo świetlo?",options:["Ty poszłaś je wyłączyć","Ja wyłączyłem światło","Nikt nic nie zrobił"],answer:0},
+{question:"Gdzie był pocałunek z zaskoczenia?",options:["za lodówką w socjalu","na klatce","w aucie"],answer:0},
+{question:"Co robiliśmy w magazynku?",options:["przesuwaliśmy meble hihihi","piliśmy kawę","oglądaliśmy filmy"],answer:0},
+{question:"Co przyniosłaś do pracy, żebyśmy spróbowali?",options:["mandarynki","jabłka","czekoladki"],answer:0},
+{question:"Jaką nową tradycję wprowadziliśmy z jedzeniem?",options:["przybijanie jedzenia","jedzenie razem","gotowanie razem"],answer:0},
+{question:"Co było powodem, żeby pojechać jeszcze raz na kawę przy świeczkach?",options:["długopis","kubek","notes"],answer:0},
+{question:"Co Ci dałem, abyś mogła zapisywać przekazanie zmiany?",options:["zeszyt","kartkę","nic"],answer:0},
+{question:"Co zrobiłaś potajemnie i zaproponowałaś podgrzać?",options:["burrito","sałatkę","kanapkę"],answer:0},
+{question:"Na czym zależało mi w naszych pytaniach na VIP-ie?",options:["żebyśmy się w sobie zakochali","żebyśmy się pośmiali","żebyśmy się zdenerwowali"],answer:0},
+{question:"Jak przemieszczałem się, żeby zdążyć do Ciebie?",options:["biegłem do Ciebie","szedłem 5 minut","rowerem 2 minuty"],answer:0},
+{question:"Jak chroniliśmy się przed deszczem?",options:["przytulając się i całując pod domem","w aucie","w kawiarni"],answer:0},
+{question:"Gdzie były potajemne pocałunki przy biurku?",options:["w pracy","w domu","w aucie"],answer:0},
+{question:"Gdzie odbył się seks na siłowni?",options:["w szatni – zamknięte drzwi","w szatni otwartej","w aucie"],answer:0},
+{question:"Gdzie było nasze miejsce spotkań?",options:["pod paczkomatem","w parku","w kawiarni"],answer:0},
+{question:"Pierwsze spotkanie w Starbucksie było?",options:["poza pracą","w pracy","w domu"],answer:0},
+{question:"Pierwsze spotkanie w wynajmowanym mieszkaniu było na ul.?",options:["Dąbrowskiego","Jedności Narodowej","Legnickiej"],answer:0},
+{question:"Pierwszy wspólny omlet – jaki był?",options:["bez soli, ale smaczny","słony","niedosolony"],answer:0},
+{question:"Ile godzin spędziliśmy razem pierwszy raz?",options:["24","12","8"],answer:0},
+{question:"Co podarowałem Ci na Walentynki na moto?",options:["nurkowanie","kwiaty","czekoladki"],answer:0},
+{question:"Co zgubiliśmy i znalazłaś Ty?",options:["kubek termiczny","telefon","portfel"],answer:0},
+{question:"Ile listów miłosnych masz do dziś?",options:["milion hihihi","sto","dziesięć"],answer:0},
+{question:"Co było, gdy pomagałem kupić telefon?",options:["wpadłaś w szał, a potem się śmiałaś","wszystko poszło gładko","nie pomagałeś"],answer:0},
+{question:"Jak przyjechałem do Ciebie do Ostrowa, skąd Cię zabrałem?",options:["z dworca","autobus","kluby"],answer:0},
+{question:"Jak przyjeżdżałem z pracy deltowozem?",options:["spałem u Ciebie, potem wracałem","jechałem do domu","wracałem do pracy"],answer:0},
+{question:"Moje ulubione jedzenie?",options:["bułka z Herta","pizza","pierogi"],answer:0},
+{question:"Ile razy byliśmy na festiwalu jedzenia?",options:["2","1","3"],answer:0},
+{question:"Co znalazłaś w internecie, co nas przyciąga?",options:["bliźniaczy płomień, bratnia dusza","miłość od pierwszego wejrzenia","karmiczna więź"],answer:0},
+{question:"Co lubiłem, gdy podczas snu kładłaś się na mnie?",options:["nóżkę","książkę","chleb"],answer:0},
+{question:"Dokąd pojechaliśmy na moje urodziny?",options:["Karpacz","Wrocław","Gdańsk"],answer:0},
+{question:"Co robiliśmy na Śnieżce pierwszy raz?",options:["wypiliśmy herbatę","tańczyliśmy","poszliśmy spać"],answer:0},
+{question:"Co piliśmy dużo w Karpaczu i rozmawialiśmy do rana?",options:["wino","piwo","herbatę"],answer:0},
+{question:"Co robiłaś w saunie w Karpaczu?",options:["byłaś podekscytowana","usnęłaś","piłaś wodę"],answer:0},
+{question:"Co robiłaś w jacuzzi?",options:["przytulałaś mnie","piłaś wino","czytałaś książkę"],answer:0},
+{question:"Co proponowałaś w drodze powrotnej z Karpacza?",options:["A może banana?","herbatę","lody"],answer:0},
+{question:"Co robiliśmy wspólnie na jarmarku?",options:["piliśmy wino i robiliśmy zdjęcia","śpiewaliśmy piosenki","lepiliśmy bałwana"],answer:0},
+{question:"Co pierwszy raz spróbowałem na jarmarku?",options:["miód pitny","oscypek","pierogi"],answer:0},
+{question:"Co robiliśmy w parku po zapaleniu razem?",options:["uprawialiśmy seks na ławce","spacerowaliśmy","piliśmy kawę"],answer:0},
+{question:"Co jedliśmy w naszej tajnej kawiarni przy kawie?",options:["croissant i kawa","kanapkę i herbatę","ciastko i wodę"],answer:0},
+{question:"Co oglądaliśmy u Ciebie w domu?",options:["serial i Milionerów","film i serial","dokument"],answer:0},
+{question:"Co robiliśmy, gdy przychodziłem niespodziewanie?",options:["kłóciliśmy się, co nas zbliżało","jedliśmy kolację","piliśmy kawę"],answer:0},
+{question:"Gdzie nocowaliśmy wspólnie?",options:["u Ciebie","w pracy","w aucie"],answer:0},
+{question:"Co przyniosłem, aby była dobra atmosfera?",options:["choinkę","lampki","kwiaty"],answer:0},
+{question:"Co najczęściej wymieniałem w girlandach?",options:["baterie","światełka","ozdoby"],answer:0},
+{question:"Co naprawiałem potajemnie w Twoim domu?",options:["odpływy","kran","okno"],answer:0},
+{question:"Co zrobiłem, gdy zostałem u Ciebie?",options:["naprawiłem laptop","sprzątałem","gotowałem"],answer:0},
+{question:"Co Ci dałem, żeby Twój sprzęt działał lepiej?",options:["ładowarkę","myszkę","kabel USB"],answer:0},
+{question:"Jak nazywał się pierwszy restauracja, gdzie pojechaliśmy?",options:["Kredens","Kurkuma","Samaki"],answer:0},
+{question:"Gdzie pojechaliśmy w Metkowie i co tam robiliśmy?",options:["jedliśmy rybę i byliśmy sami","piliśmy kawę","robiliśmy zakupy"],answer:0},
+{question:"Nasze pierwsze kino – jaki film oglądaliśmy?",options:["Rozgrzeszenie","Titanic","Incepcja"],answer:0},
+{question:"O której godzinie pojechaliśmy na kawę ze świeczkami?",options:["21:00","19:00","18:30"],answer:0},
+{question:"Kiedy spotkaliśmy się po raz pierwszy?",options:["01.09.2024","01.08.2024","15.09.2024"],answer:0},
+{question:"Ile razy mówiłaś mi, że chcesz spróbować?",options:["5","3","1"],answer:0},
+{question:"Jak nazywa się hotel, w którym byliśmy w Karpaczu?",options:["Lake Hill Karkonosze Resort & Spa","Hotel Karpacz","Mountain Resort"],answer:0},
+{question:"Co piliśmy na tarasie w Karpaczu?",options:["wino","piwo","sok"],answer:0},
+{question:"Gdzie było nasze częste miejsce spotkań?",options:["przy paczkomacie","w parku","w kawiarni"],answer:0},
+{question:"Na jakim VIP-ie byliśmy?",options:["Pack","Admin","Cellka"],answer:0},
+{question:"Kto pierwszy nas zobaczył, że coś robimy?",options:["Tsalto","Koreańczyk","Nikt"],answer:0},
+{question:"Najkrótszy moment mieliśmy gdzie?",options:["na klatce schodowej","w aucie","w mieszkaniu"],answer:0},
+{question:"Nasz pierwszy raz był gdzie?",options:["w mieszkaniu","w aucie","na jachcie"],answer:0},
+{question:"Kiedy pytałaś mnie, jak by to wyglądało, gdybyśmy byli razem?",options:["wierzyłem, że będziemy","myślałem, że to niemożliwe","byłem zaskoczony"],answer:0},
+{question:"Co mi się nie spodobało na szajnach?",options:["jajko","zupa","sałatka"],answer:0},
+{question:"Gdzie nocowaliśmy w aucie?",options:["Jelcze Laskowice","w parku","przy domu"],answer:0},
+{question:"Ile jabłek było na stole?",options:["3","2","5"],answer:0},
+{question:"Co nagraliśmy, gdy zamykałem szlabany?",options:["wideo","zdjęcie","nic"],answer:0},
+{question:"Gdzie kąpaliśmy się i rozmawialiśmy?",options:["Staw Królewiecki","basen","jacuzzi"],answer:0},
+{question:"Gdzie robiłem Ci obiecane szaszłyki?",options:["Sulikamp","w domu","w parku"],answer:0},
+{question:"Jak spędziliśmy ostatni ciepły dzień 2024 roku?",options:["pływaliśmy kajakiem i piliśmy piwo na plaży","w domu","w parku"],answer:0},
+{question:"Co Ci gotowałem?",options:["zapiekankę i placki ziemniaczane","jajecznicę","kanapki"],answer:0},
+{question:"Co powiedziałaś przy parkomacie?",options:["Czy mamy pieniądze?","Zapłacisz Ty?","Zostawmy auto"],answer:0},
+{question:"Gdzie pojechaliśmy na kawę po jagodziankę?",options:["Bielany Wrocławskie","centrum","park"],answer:0},
+{question:"Na jarmarku Bożego Narodzenia co zrobiliśmy?",options:["zdjęcie w budce","jedliśmy pierogi","piliśmy kawę"],answer:0},
+{question:"Na jarmarku spróbowaliśmy?",options:["miód pitny","grzane wino","salo"],answer:0},
+{question:"Na filmie z jarmarku, co robimy?",options:["całujemy się","pijemy kawę","robimy zdjęcia"],answer:0},
+{question:"Na łyżwach, czy trzymaliśmy się za ręce?",options:["tak","nie","nie pamiętam"],answer:0},
+{question:"Na jakim biegu było auto, gdy się zepsuło?",options:["2","1","3"],answer:0},
+{question:"Ile % baterii miałaś po koncercie jak odbiral ci w nocy?",options:["1%","5%","10%"],answer:0},
+{question:"Co zobaczył Łazarchuk?",options:["że położyłaś nogę","nic","pocałunek"],answer:0},
+{question:"Czego nie słyszeliśmy?",options:["radia","muzyki","rozmów"],answer:0},
+{question:"Jedzeniem na pół, żeby spróbować więcej?",options:["tak","nie","czasami"],answer:0},
+{question:"Co robiliśmy na plaży cały dzień?",options:["jedliśmy lody i pływaliśmy","spaliśmy","sprzątaliśmy plażę"],answer:0},
+{question:"Po kinie w aucie – co robiliśmy?",options:["leżeliśmy i nie chcieliśmy wracać","rozmawialiśmy","jedliśmy"],answer:0},
+{question:"Co myślałem, gdy chodziliśmy po mieście?",options:["chciałem, żeby wszyscy widzieli, że jesteś moja","że jesteśmy anonimowi","że możemy się ukryć"],answer:0},
+{question:"Jak często robiliśmy synchroniczne czynności?",options:["często","rzadko","nigdy"],answer:0},
+{question:"Jak mnie leczyłaś?",options:["zrobiłaś, żebym zrobił inhalację","nie robiłaś","proponowałaś"],answer:0},
+{question:"Czy gotowałaś mi jedzenie na nocną zmianę?",options:["tak","kupowałaś gotowe","nie robiłaś"],answer:0}
+];
+// === Перемешивание вариантов и обновление answer ===
+function shuffleOptions(question) {
+  const correctValue = question.options[question.answer];
+
+  for (let i = question.options.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [question.options[i], question.options[j]] =
+    [question.options[j], question.options[i]];
+  }
+
+  question.answer = question.options.indexOf(correctValue);
+}
+
+// Перемешать все вопросы один раз
+quiz.forEach(shuffleOptions);
+
+// === Викторина логика ===
+let current=0, correct=0, errors=0, maxErrors=3, hintsUsed=[false,false,false,false];
+
+function loadQuestion(){
+  if(current>=quiz.length){ showPrize(); return; }
+  if(errors>=maxErrors){ showGameOver(); return; }
+
+  const q = quiz[current];
+  const questionEl = document.getElementById('question');
+  const optionsDiv = document.getElementById('options');
+  optionsDiv.innerHTML = '';
+  questionEl.style.opacity = 0;
+  questionEl.style.transform = "translateY(20px)";
+  setTimeout(()=>{
+    questionEl.innerText = q.question;
+    questionEl.style.opacity = 1;
+    questionEl.style.transform = "translateY(0)";
+    q.options.forEach((opt, idx)=>{
+      const btn = document.createElement('button');
+      btn.innerText = opt;
+      btn.onclick = ()=>checkAnswer(idx, btn);
+      optionsDiv.appendChild(btn);
+    });
+  }, 250);
+  updateProgress();
+  updateErrors();
+}
+
+function checkAnswer(selected, btn){
+  const correctIdx = quiz[current].answer;
+  if(selected===correctIdx){ btn.classList.add('correct'); correct++; current++; }
+  else { btn.classList.add('wrong'); removeHeart(); }
+  setTimeout(loadQuestion, 500);
+}
+
+function removeHeart(){
+  const hearts = document.querySelectorAll('.heart');
+  if(hearts.length>0){ hearts[0].style.opacity=0; setTimeout(()=>hearts[0].remove(),400); errors++; }
+}
+
+function updateProgress(){
+  const percent=Math.round((correct/quiz.length)*100);
+  const progressFill=document.getElementById('progressFill');
+  progressFill.style.width=percent+'%'; progressFill.innerText=percent+'%';
+}
+
+function updateErrors(){
+  const errorsDiv=document.getElementById('errors'); 
+  errorsDiv.innerHTML='';
+  const remaining=maxErrors-errors;
+  for(let i=0;i<remaining;i++){ const heart=document.createElement('span'); heart.className='heart'; heart.innerHTML='❤️'; errorsDiv.appendChild(heart); }
+}
+
+function restartQuiz(){
+  current=0; correct=0; errors=0; hintsUsed=[false,false,false,false];
+  document.getElementById('gameoverScreen').style.display='none';
+  document.getElementById('prizeScreen').style.display='none';
+  document.getElementById('giftBox').classList.remove('open');
+  document.getElementById('giftLink').style.display='none';
+  document.getElementById('quizScreen').classList.add('active');
+  document.querySelectorAll('.confetti-piece').forEach(c=>c.remove());
+  document.querySelectorAll('.hint-btn').forEach(b=>{ b.classList.remove('used'); b.disabled=false; });
+  loadQuestion();
+}
+
+function showPrize(){
+  document.getElementById('quizScreen').classList.remove('active');
+  document.getElementById('prizeScreen').style.display='block';
+  for(let i=0;i<60;i++){
+    const confetti=document.createElement('div'); confetti.className='confetti-piece';
+    confetti.style.left=Math.random()*100+'%';
+    confetti.style.backgroundColor=`hsl(${Math.random()*360},70%,60%)`;
+    confetti.style.animationDuration=2+Math.random()*2+'s';
+    confetti.style.width=confetti.style.height=(5+Math.random()*5)+'px';
+    document.body.appendChild(confetti);
+  }
+}
+
+function showGameOver(){
+  document.getElementById('quizScreen').classList.remove('active');
+  document.getElementById('gameoverScreen').style.display='block';
+}
+
+function useHint(hintIdx){
+  if(hintsUsed[hintIdx]) return;
+  hintsUsed[hintIdx]=true;
+  const hintBtn=document.getElementById('hint'+(hintIdx+1));
+  hintBtn.classList.add('used'); hintBtn.disabled=true;
+  const buttons=document.querySelectorAll('.options button');
+  const correctIdx=quiz[current].answer;
+  buttons.forEach((b,i)=>{ if(i===correctIdx){ b.classList.add('correct'); b.style.animation='correctPulse 1s infinite alternate'; } });
+}
+
+function openGift(){
+  const box=document.getElementById('giftBox');
+  const link=document.getElementById('giftLink');
+  box.classList.add('open'); link.style.display='block';
+}
+</script>
+</body>
+</html>
