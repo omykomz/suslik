@@ -48,7 +48,7 @@ button.restart:hover { transform:translateY(-2px); background:#ff4f9b; }
     <div class="welcome">
       🎉 Suslik, przygotowałem dla Ciebie coś. 
       <div></div>
-      <div>Wcześniej nie da się rozpocząć gry, więc poczekaj do 24.02.2026 do 17:00. </div>
+      <div>Wcześniej nie da się rozpocząć gry, więc poczekaj do 24.02.2026. </div>
       <div></div>
       <div>Urodziny zaczynają się wkrótce!🎉</div>
 
@@ -88,7 +88,7 @@ Obejrzyj całe wideo i znajdziesz kod. Powodzenia 🙂 obejrzy   <a href="https:
     🎉 Gratulacje! Ukończyłaś quiz! 🎉
     <div class="gift-box" id="giftBox" onclick="openGift()">🎁</div>
     <div id="giftLink" style="display:none; margin-top:8px;">
-      <a href="https://youtube.com" target="_blank">Odbierz swój prezent</a>
+      <a href="https://www.youtube.com/watch?v=gRwEaTlseo8" target="_blank">Odbierz swój prezent</a>
     </div>
   </div>
 
@@ -102,7 +102,7 @@ Obejrzyj całe wideo i znajdziesz kod. Powodzenia 🙂 obejrzy   <a href="https:
 
 <script>
 // === Таймер до 24.02.2026 17:00 по польскому времени (CET/UTC+1) ===
-const targetDate = new Date('2026-02-24T17:00:00+01:00').getTime();
+const targetDate = new Date('2026-02-22T17:00:00+01:00').getTime();
 const timerEl = document.getElementById('timer');
 
 let timerInterval = setInterval(()=>{
@@ -124,7 +124,7 @@ let timerInterval = setInterval(()=>{
 function tryStart(){
   const now = new Date().getTime();
   if(now < targetDate){
-    alert("Jeszcze za wcześnie! Poczekaj do 24.02.2026 17:00");
+    alert("Jeszcze za wcześnie! Poczekaj do 24.02.2026");
   } else {
     document.getElementById('startScreen').classList.remove('active');
     document.getElementById('codeScreen').classList.add('active');
@@ -362,4 +362,5 @@ function openGift(){
 </script>
 </body>
 </html>
+
 
