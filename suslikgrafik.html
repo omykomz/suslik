@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suslik Grafik Pracy</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f14;
+    --surface: #161820;
+    --surface2: #1e2028;
+    --border: #2a2c38;
+    --text: #f0f1f5;
+    --text-muted: #6b7080;
+    --zastepca: #4f8ef7;
+    --zastepca-soft: rgba(79,142,247,0.15);
+    --recepcja: #34d9a0;
+    --recepcja-soft: rgba(52,217,160,0.15);
+    --cctv: #f7a14f;
+    --cctv-soft: rgba(247,161,79,0.15);
+    --accent: #4f8ef7;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px 16px 40px;
+  }
+
+  header { text-align: center; margin-bottom: 28px; }
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 30%, #6b7080);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header p { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
+
+  .stawki-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stawka-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stawka-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+  }
+  .stawka-card.z::before { background: var(--zastepca); }
+  .stawka-card.r::before { background: var(--recepcja); }
+  .stawka-card.c::before { background: var(--cctv); }
+  .stawka-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .stawka-card.z .stawka-label { color: var(--zastepca); }
+  .stawka-card.r .stawka-label { color: var(--recepcja); }
+  .stawka-card.c .stawka-label { color: var(--cctv); }
+  .stawka-input-row { display: flex; align-items: center; gap: 4px; }
+  .stawka-input-row input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 6px 8px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .stawka-input-row input:focus { border-color: var(--accent); }
+  .stawka-input-row span { color: var(--text-muted); font-size: 0.75rem; white-space: nowrap; }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .panel-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .stanowisko-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+  .tab-btn {
+    padding: 10px 8px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .tab-btn.active-z { border-color: var(--zastepca); background: var(--zastepca-soft); color: var(--zastepca); }
+  .tab-btn.active-r { border-color: var(--recepcja); background: var(--recepcja-soft); color: var(--recepcja); }
+  .tab-btn.active-c { border-color: var(--cctv); background: var(--cctv-soft); color: var(--cctv); }
+  .godziny-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .godz-label { font-size: 0.82rem; color: var(--text-muted); }
+  .godz-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip {
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.45;
+  }
+  .chip:hover { opacity: 0.75; border-color: var(--text-muted); color: var(--text); }
+  .chip.active { opacity: 1; box-shadow: 0 0 0 2px rgba(255,255,255,0.08); }
+  .chip.active.sel-z { color: #fff; background: var(--zastepca); border-color: var(--zastepca); }
+  .chip.active.sel-r { color: #fff; background: var(--recepcja); border-color: var(--recepcja); }
+  .chip.active.sel-c { color: #fff; background: var(--cctv); border-color: var(--cctv); }
+  .chip.sel-z { color: var(--zastepca); border-color: var(--zastepca); }
+  .chip.sel-r { color: var(--recepcja); border-color: var(--recepcja); }
+  .chip.sel-c { color: var(--cctv); border-color: var(--cctv); }
+  .godz-custom { display: flex; align-items: center; gap: 4px; }
+  .godz-custom input {
+    width: 54px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 5px 8px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .godz-custom input:focus { border-color: var(--accent); }
+  .godz-custom span { color: var(--text-muted); font-size: 0.78rem; }
+
+  .calendar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .cal-header h2 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; text-transform: capitalize; }
+  .nav-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    width: 32px; height: 32px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .nav-btn:hover { background: var(--border); }
+  .cal-days-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  .cal-days-header span {
+    text-align: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    padding: 4px 0;
+  }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-day {
+    aspect-ratio: 1;
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.15s;
+    background: var(--surface2);
+    border: 1px solid transparent;
+    gap: 2px;
+    padding: 2px;
+    min-height: 40px;
+  }
+  .cal-day:hover:not(.empty) { border-color: var(--border); background: #252730; }
+  .cal-day.empty { background: transparent; cursor: default; }
+  .cal-day.today .day-num {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .day-num { font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--text); line-height: 1; }
+  .day-dots { display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; }
+  .dot { width: 5px; height: 5px; border-radius: 50%; }
+  .dot-z { background: var(--zastepca); }
+  .dot-r { background: var(--recepcja); }
+  .dot-c { background: var(--cctv); }
+  .day-tooltip {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1c26;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .cal-day:hover .day-tooltip { opacity: 1; }
+  .tooltip-item { display: flex; align-items: center; gap: 5px; margin: 2px 0; }
+  .tooltip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .sum-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .sum-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; }
+  .sum-card.z::after { background: var(--zastepca); }
+  .sum-card.r::after { background: var(--recepcja); }
+  .sum-card.c::after { background: var(--cctv); }
+  .sum-name { font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .sum-card.z .sum-name { color: var(--zastepca); }
+  .sum-card.r .sum-name { color: var(--recepcja); }
+  .sum-card.c .sum-name { color: var(--cctv); }
+  .sum-hours { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; line-height: 1; margin-bottom: 2px; }
+  .sum-pay { font-size: 0.75rem; color: var(--text-muted); }
+  .sum-pay strong { color: var(--text); font-weight: 600; }
+  .total-card {
+    background: linear-gradient(135deg, #1e2028, #161820);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .total-left .tl { font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 4px; }
+  .total-left .th { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--text); }
+  .total-right .amount {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff, #a0aacc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+  .total-right .currency { font-size: 0.8rem; color: var(--text-muted); text-align: right; margin-top: 2px; }
+
+  .shifts-section { margin-top: 20px; }
+  .shifts-title { font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 10px; }
+  .shift-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    margin-bottom: 6px;
+  }
+  .shift-color { width: 4px; height: 36px; border-radius: 2px; flex-shrink: 0; }
+  .shift-info { flex: 1; }
+  .shift-pos { font-family: 'Syne', sans-serif; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .shift-details { font-size: 0.78rem; color: var(--text-muted); margin-top: 1px; }
+  .shift-pay { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; margin-right: 8px; }
+  .del-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .del-btn:hover { background: rgba(255,80,80,0.15); color: #ff5050; }
+  .empty-state { text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 24px; }
+
+  @media (max-width: 480px) {
+    body { padding: 14px 12px 50px; }
+    header h1 { font-size: 1.5rem; }
+    .stawki-grid { gap: 8px; }
+    .stawka-card { padding: 10px 10px; }
+    .stawka-label { font-size: 0.62rem; }
+    .stawka-input-row input { font-size: 0.9rem; padding: 5px 6px; }
+    .panel { padding: 12px; }
+    .stanowisko-tabs { gap: 6px; }
+    .tab-btn { padding: 9px 4px; font-size: 0.68rem; letter-spacing: 0; }
+    .chip { padding: 5px 11px; font-size: 0.75rem; }
+    .godz-custom input { width: 48px; font-size: 0.8rem; }
+    .calendar-wrap { padding: 12px 10px; }
+    .cal-header h2 { font-size: 0.9rem; }
+    .cal-days-header span { font-size: 0.58rem; letter-spacing: 0; }
+    .cal-grid { gap: 3px; }
+    .cal-day { border-radius: 6px; min-height: 36px; }
+    .day-num { font-size: 0.72rem; }
+    .dot { width: 4px; height: 4px; }
+    .summary { gap: 8px; }
+    .sum-card { padding: 10px 8px; }
+    .sum-name { font-size: 0.58rem; letter-spacing: 0.5px; }
+    .sum-hours { font-size: 1rem; }
+    .sum-pay { font-size: 0.68rem; }
+    .total-card { padding: 14px 12px; }
+    .total-right .amount { font-size: 1.5rem; }
+    .shift-item { padding: 8px 10px; gap: 8px; }
+    .shift-pos { font-size: 0.68rem; }
+    .shift-details { font-size: 0.72rem; }
+    .shift-pay { font-size: 0.82rem; }
+    .shift-color { height: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Suslik Grafik Pracy</h1>
+  <p>Kliknij na dzień, aby dodać zmianę</p>
+</header>
+
+<!-- STAWKI -->
+<div class="stawki-grid">
+  <div class="stawka-card z">
+    <div class="stawka-label">Zastępca</div>
+    <div class="stawka-input-row">
+      <input type="number" id="stawka-z" placeholder="0" min="0" step="0.5">
+      <span>zł/h</span>
+    </div>
+  </div>
+  <div class="stawka-card r">
+    <div class="stawka-label">Recepcja</div>
+    <div class="stawka-input-row">
+      <input type="number" id="stawka-r" placeholder="0" min="0" step="0.5">
+      <span>zł/h</span>
+    </div>
+  </div>
+  <div class="stawka-card c">
+    <div class="stawka-label">CCTV</div>
+    <div class="stawka-input-row">
+      <input type="number" id="stawka-c" placeholder="0" min="0" step="0.5">
+      <span>zł/h</span>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL -->
+<div class="panel">
+  <div class="panel-title">Aktywna zmiana do dodania</div>
+  <div class="stanowisko-tabs">
+    <button class="tab-btn active-z" data-pos="z" onclick="selectPos('z')">Zastępca</button>
+    <button class="tab-btn" data-pos="r" onclick="selectPos('r')">Recepcja</button>
+    <button class="tab-btn" data-pos="c" onclick="selectPos('c')">CCTV</button>
+  </div>
+  <div class="godziny-row">
+    <span class="godz-label">Godziny:</span>
+    <div class="godz-chips" id="chips">
+      <button class="chip sel-z active" data-h="12" onclick="selectHours(12)">12h</button>
+      <button class="chip sel-z" data-h="24" onclick="selectHours(24)">24h</button>
+      <button class="chip sel-z" data-h="10" onclick="selectHours(10)">10h</button>
+    </div>
+    <div class="godz-custom">
+      <input type="number" id="custom-hours" placeholder="?" min="1" max="48" oninput="selectCustomHours(this.value)">
+      <span>h</span>
+    </div>
+  </div>
+</div>
+
+<!-- CALENDAR -->
+<div class="calendar-wrap">
+  <div class="cal-header">
+    <button class="nav-btn" onclick="changeMonth(-1)">‹</button>
+    <h2 id="cal-title"></h2>
+    <button class="nav-btn" onclick="changeMonth(1)">›</button>
+  </div>
+  <div class="cal-days-header">
+    <span>Pon</span><span>Wt</span><span>Śr</span><span>Czw</span><span>Pt</span><span>Sob</span><span>Nd</span>
+  </div>
+  <div class="cal-grid" id="cal-grid"></div>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary">
+  <div class="sum-card z">
+    <div class="sum-name">Zastępca</div>
+    <div class="sum-hours" id="sum-h-z">0h</div>
+    <div class="sum-pay">Zarobek: <strong id="sum-p-z">0,00 zł</strong></div>
+  </div>
+  <div class="sum-card r">
+    <div class="sum-name">Recepcja</div>
+    <div class="sum-hours" id="sum-h-r">0h</div>
+    <div class="sum-pay">Zarobek: <strong id="sum-p-r">0,00 zł</strong></div>
+  </div>
+  <div class="sum-card c">
+    <div class="sum-name">CCTV</div>
+    <div class="sum-hours" id="sum-h-c">0h</div>
+    <div class="sum-pay">Zarobek: <strong id="sum-p-c">0,00 zł</strong></div>
+  </div>
+</div>
+<div class="total-card">
+  <div class="total-left">
+    <div class="tl">Łączny czas pracy</div>
+    <div class="th" id="total-hours">0 godzin</div>
+  </div>
+  <div class="total-right">
+    <div class="amount" id="total-pay">0,00</div>
+    <div class="currency">PLN</div>
+  </div>
+</div>
+
+<!-- SHIFTS LIST -->
+<div class="shifts-section">
+  <div class="shifts-title">Historia zmian</div>
+  <div id="shift-list"></div>
+</div>
+
+<script>
+let state = {
+  currentPos: 'z',
+  currentHours: 12,
+  viewYear: new Date().getFullYear(),
+  viewMonth: new Date().getMonth(),
+  shifts: [],
+  stawki: { z: 0, r: 0, c: 0 }
+};
+
+const MONTHS_PL = ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
+const POS_LABELS = { z: 'Zastępca', r: 'Recepcja', c: 'CCTV' };
+const POS_COLORS = { z: '#4f8ef7', r: '#34d9a0', c: '#f7a14f' };
+
+// ─── PERSIST ─────────────────────────────────────────────────
+function load() {
+  const saved = localStorage.getItem('grafik_shifts');
+  if (saved) state.shifts = JSON.parse(saved);
+  const savedS = localStorage.getItem('grafik_stawki');
+  if (savedS) state.stawki = JSON.parse(savedS);
+  document.getElementById('stawka-z').value = state.stawki.z || '';
+  document.getElementById('stawka-r').value = state.stawki.r || '';
+  document.getElementById('stawka-c').value = state.stawki.c || '';
+}
+
+function save() {
+  localStorage.setItem('grafik_shifts', JSON.stringify(state.shifts));
+  localStorage.setItem('grafik_stawki', JSON.stringify(state.stawki));
+}
+
+// ─── STAWKI ───────────────────────────────────────────────────
+['z','r','c'].forEach(p => {
+  document.getElementById('stawka-'+p).addEventListener('input', function() {
+    state.stawki[p] = parseFloat(this.value) || 0;
+    save();
+    updateSummary();
+    renderShiftList();
+  });
+});
+
+// ─── POSITION ────────────────────────────────────────────────
+function selectPos(pos) {
+  state.currentPos = pos;
+  document.querySelectorAll('.tab-btn').forEach(b => b.className = 'tab-btn');
+  document.querySelector(`[data-pos="${pos}"]`).className = `tab-btn active-${pos}`;
+  updateChips();
+  const defaults = { z: 24, r: 10, c: 12 };
+  selectHours(defaults[pos]);
+}
+
+function updateChips() {
+  const p = state.currentPos;
+  document.querySelectorAll('.chip').forEach(c => {
+    c.className = `chip sel-${p}`;
+    if (parseInt(c.dataset.h) === state.currentHours) c.classList.add('active');
+  });
+}
+
+function selectHours(h) {
+  state.currentHours = h;
+  document.getElementById('custom-hours').value = '';
+  updateChips();
+}
+
+function selectCustomHours(v) {
+  const h = parseInt(v);
+  if (h > 0 && h <= 48) {
+    state.currentHours = h;
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  }
+}
+
+// ─── CALENDAR ────────────────────────────────────────────────
+function changeMonth(dir) {
+  state.viewMonth += dir;
+  if (state.viewMonth > 11) { state.viewMonth = 0; state.viewYear++; }
+  if (state.viewMonth < 0) { state.viewMonth = 11; state.viewYear--; }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const { viewYear: y, viewMonth: m } = state;
+  document.getElementById('cal-title').textContent = `${MONTHS_PL[m]} ${y}`;
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  const firstDay = new Date(y, m, 1).getDay();
+  const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const today = new Date();
+
+  for (let i = 0; i < startOffset; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day empty';
+    grid.appendChild(el);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateKey = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayShifts = state.shifts.filter(s => s.date === dateKey);
+    const isToday = today.getFullYear()===y && today.getMonth()===m && today.getDate()===d;
+
+    const el = document.createElement('div');
+    el.className = 'cal-day' + (isToday ? ' today' : '');
+
+    const numEl = document.createElement('div');
+    numEl.className = 'day-num';
+    numEl.textContent = d;
+    el.appendChild(numEl);
+
+    if (dayShifts.length > 0) {
+      const dotsEl = document.createElement('div');
+      dotsEl.className = 'day-dots';
+      dayShifts.forEach(s => {
+        const dot = document.createElement('div');
+        dot.className = `dot dot-${s.pos}`;
+        dotsEl.appendChild(dot);
+      });
+      el.appendChild(dotsEl);
+
+      const tip = document.createElement('div');
+      tip.className = 'day-tooltip';
+      dayShifts.forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'tooltip-item';
+        const tdot = document.createElement('div');
+        tdot.className = 'tooltip-dot';
+        tdot.style.background = POS_COLORS[s.pos];
+        const pay = (s.hours * (state.stawki[s.pos] || 0)).toFixed(2);
+        item.appendChild(tdot);
+        const txt = document.createElement('span');
+        txt.textContent = `${POS_LABELS[s.pos]} • ${s.hours}h • ${pay} zł`;
+        item.appendChild(txt);
+        tip.appendChild(item);
+      });
+      el.appendChild(tip);
+    }
+
+    el.addEventListener('click', () => toggleShift(dateKey));
+    grid.appendChild(el);
+  }
+}
+
+function toggleShift(dateKey) {
+  const p = state.currentPos;
+  const h = state.currentHours;
+  const idx = state.shifts.findIndex(s => s.date === dateKey && s.pos === p);
+  if (idx !== -1) {
+    state.shifts.splice(idx, 1);
+  } else {
+    state.shifts.push({ date: dateKey, pos: p, hours: h, id: Date.now() });
+  }
+  save();
+  renderCalendar();
+  updateSummary();
+  renderShiftList();
+}
+
+// ─── SUMMARY ─────────────────────────────────────────────────
+function updateSummary() {
+  const totals = { z: {h:0,p:0}, r: {h:0,p:0}, c: {h:0,p:0} };
+  state.shifts.forEach(s => {
+    totals[s.pos].h += s.hours;
+    totals[s.pos].p += s.hours * (state.stawki[s.pos] || 0);
+  });
+  ['z','r','c'].forEach(p => {
+    document.getElementById(`sum-h-${p}`).textContent = totals[p].h + 'h';
+    document.getElementById(`sum-p-${p}`).textContent = formatPln(totals[p].p);
+  });
+  const totalH = totals.z.h + totals.r.h + totals.c.h;
+  const totalP = totals.z.p + totals.r.p + totals.c.p;
+  document.getElementById('total-hours').textContent = `${totalH} godzin`;
+  document.getElementById('total-pay').textContent = formatPln(totalP).replace(' zł','');
+}
+
+function formatPln(val) {
+  return val.toFixed(2).replace('.',',') + ' zł';
+}
+
+// ─── SHIFT LIST ───────────────────────────────────────────────
+function renderShiftList() {
+  const el = document.getElementById('shift-list');
+  const sorted = [...state.shifts].sort((a,b) => b.date.localeCompare(a.date));
+  if (sorted.length === 0) {
+    el.innerHTML = '<div class="empty-state">Brak zmian. Kliknij na dzień w kalendarzu, aby dodać.</div>';
+    return;
+  }
+  el.innerHTML = '';
+  sorted.forEach(s => {
+    const pay = (s.hours * (state.stawki[s.pos] || 0)).toFixed(2).replace('.',',');
+    const dateObj = new Date(s.date + 'T12:00:00');
+    const dateStr = dateObj.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' });
+    const item = document.createElement('div');
+    item.className = 'shift-item';
+    item.innerHTML = `
+      <div class="shift-color" style="background:${POS_COLORS[s.pos]}"></div>
+      <div class="shift-info">
+        <div class="shift-pos" style="color:${POS_COLORS[s.pos]}">${POS_LABELS[s.pos]}</div>
+        <div class="shift-details">${dateStr} • ${s.hours}h</div>
+      </div>
+      <div class="shift-pay" style="color:${POS_COLORS[s.pos]}">${pay} zł</div>
+      <button class="del-btn" onclick="deleteShift(${s.id})">✕</button>
+    `;
+    el.appendChild(item);
+  });
+}
+
+function deleteShift(id) {
+  state.shifts = state.shifts.filter(s => s.id !== id);
+  save();
+  renderCalendar();
+  updateSummary();
+  renderShiftList();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+load();
+renderCalendar();
+updateSummary();
+renderShiftList();
+selectPos('z');
+</script>
+
+</body>
+</html>
