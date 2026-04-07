@@ -1,143 +1,94 @@
-<!DOCTYPE html> 
-<html lang="pl">
+<!DOCTYPE html>
+<html lang="uk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Cele 2026</title>
-
-<!-- (СТИЛИ БЕЗ ИЗМЕНЕНИЙ) -->
-<!-- ... оставлены как есть ... -->
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Цілі</title>
+<style>
+body { font-family: Arial; background:#111; color:#fff; padding:20px; }
+.card { background:#222; padding:15px; border-radius:10px; margin-bottom:10px; }
+button { padding:10px; margin-top:10px; cursor:pointer; }
+.done { opacity:0.5; text-decoration:line-through; }
+</style>
 </head>
 <body>
 
-<div class="toast" id="toast"></div>
+<h2>Мої цілі</h2>
+<div id="list"></div>
 
-<!-- HEADER -->
-<div class="header" id="mainHeader">
-  <div class="header-top">
-    <h1>Cele na rok</h1>
-    <div class="year-badge">2026</div>
-  </div>
-  <div class="overall-progress">
-    <div class="progress-label">
-      <span>Ogólny postęp</span>
-      <span id="overallPercent">0%</span>
-    </div>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar-fill" id="overallBar" style="width:0%"></div>
-    </div>
-  </div>
-</div>
+<script>
+let goals = [
+  {
+    id: 1,
+    title: 'Аналізи',
+    type: 'checklist',
+    done: false,
+    subtasks: [
+      { id: 1, text: 'Загальний аналіз крові', done: false },
+      { id: 2, text: 'Гормони щитовидки', done: false },
+      { id: 3, text: 'УЗД', done: false },
+      { id: 4, text: 'Візит до лікаря', done: false }
+    ]
+  },
+  {
+    id: 2,
+    title: 'Відпочити мінімум 4 рази',
+    type: 'counter',
+    done: false,
+    current: 0,
+    target: 4
+  }
+];
 
-<!-- PAGE: GOALS -->
-<div class="page active" id="page-goals">
-  <div style="padding: 14px 16px 0;">
-    <div class="filter-row" id="filterRow">
-      <button class="filter-chip active" data-cat="all">Wszystkie</button>
-      <button class="filter-chip" data-cat="documents">📄 Dokumenty</button>
-      <button class="filter-chip" data-cat="family">👨‍👩‍👦 Rodzina</button>
-      <button class="filter-chip" data-cat="health">💪 Zdrowie</button>
-      <button class="filter-chip" data-cat="finance">💰 Finanse</button>
-      <button class="filter-chip" data-cat="travel">✈️ Podróże</button>
-      <button class="filter-chip" data-cat="career">🚀 Kariera</button>
-    </div>
-  </div>
+function render() {
+  const el = document.getElementById('list');
+  el.innerHTML = '';
 
-  <div class="sort-row">
-    <span class="sort-label">Sortuj:</span>
-    <button class="sort-btn active">Domyślnie</button>
-    <button class="sort-btn">Priorytet</button>
-    <button class="sort-btn">Postęp</button>
-    <button class="sort-btn">Termin</button>
-  </div>
+  goals.forEach(g => {
+    const div = document.createElement('div');
+    div.className = 'card ' + (g.done ? 'done' : '');
 
-  <div class="goals-list" id="goalsList"></div>
-</div>
+    if (g.type === 'checklist') {
+      div.innerHTML = `<b>${g.title}</b><br>` +
+        g.subtasks.map(s =>
+          `<div>
+            <input type="checkbox" ${s.done?'checked':''}
+              onchange="toggleSub(${g.id},${s.id})">
+            ${s.text}
+          </div>`
+        ).join('');
+    }
 
-<!-- PAGE: STATS -->
-<div class="page" id="page-stats">
-  <div class="stats-page">
-    <h2>📊 Statystyki</h2>
-    <div class="stats-grid">
-      <div class="stat-card accent"><div class="stat-val">0</div><div class="stat-label">Wszystkich celów</div></div>
-      <div class="stat-card green"><div class="stat-val">0</div><div class="stat-label">Wykonane</div></div>
-      <div class="stat-card gold"><div class="stat-val">0</div><div class="stat-label">W trakcie</div></div>
-      <div class="stat-card blue"><div class="stat-val">0</div><div class="stat-label">Podzadań wykonano</div></div>
-    </div>
-  </div>
-</div>
+    if (g.type === 'counter') {
+      div.innerHTML = `<b>${g.title}</b><br>
+        ${g.current} / ${g.target}<br>
+        <button onclick="add(${g.id})">+1</button>`;
+    }
 
-<!-- FAB -->
-<button class="fab">＋</button>
+    el.appendChild(div);
+  });
+}
 
-<!-- NAV -->
-<div class="bottom-nav">
-  <button class="nav-btn active">Cele</button>
-  <button class="nav-btn">Postęp</button>
-</div>
+function toggleSub(goalId, subId) {
+  const g = goals.find(x=>x.id===goalId);
+  const s = g.subtasks.find(x=>x.id===subId);
+  s.done = !s.done;
 
-<!-- ADD MODAL -->
-<div class="modal-overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Nowy cel</h2>
-      <p>Dodaj swój cel na 2026</p>
-    </div>
-    <div class="modal-body">
+  if (g.subtasks.every(x=>x.done)) g.done = true;
+  else g.done = false;
 
-      <div class="form-group">
-        <div class="input-label">Nazwa celu</div>
-        <input class="input-field" placeholder="Np: nauczyć się angielskiego" />
-      </div>
+  render();
+}
 
-      <div class="form-group">
-        <div class="input-label">Kategoria</div>
-        <select class="input-field">
-          <option>📄 Dokumenty</option>
-          <option>👨‍👩‍👦 Rodzina</option>
-          <option>💪 Zdrowie</option>
-          <option>💰 Finanse</option>
-          <option>✈️ Podróże</option>
-          <option>🚀 Kariera</option>
-          <option>⭐ Inne</option>
-        </select>
-      </div>
+function add(id) {
+  const g = goals.find(x=>x.id===id);
+  g.current++;
+  if (g.current >= g.target) g.done = true;
+  render();
+}
 
-      <div class="form-group">
-        <div class="input-label">Priorytet</div>
-        <select class="input-field">
-          <option>🔴 Wysoki</option>
-          <option>🟡 Średni</option>
-          <option>🔵 Niski</option>
-          <option>⚪ Brak</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <div class="input-label">Typ śledzenia</div>
-        <select class="input-field">
-          <option>✅ Wykonane / Niewykonane</option>
-          <option>🔢 Licznik</option>
-          <option>📋 Lista podzadań</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <div class="input-label">Termin (opcjonalnie)</div>
-        <input type="date" class="input-field">
-      </div>
-
-      <div class="form-group">
-        <div class="input-label">Notatki (opcjonalnie)</div>
-        <textarea class="input-field"></textarea>
-      </div>
-
-      <button class="save-btn">Zapisz cel</button>
-
-    </div>
-  </div>
-</div>
+render();
+</script>
 
 </body>
-</html>
+</html></html>
