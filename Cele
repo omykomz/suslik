@@ -1,0 +1,143 @@
+<!DOCTYPE html> 
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cele 2026</title>
+
+<!-- (СТИЛИ БЕЗ ИЗМЕНЕНИЙ) -->
+<!-- ... оставлены как есть ... -->
+
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- HEADER -->
+<div class="header" id="mainHeader">
+  <div class="header-top">
+    <h1>Cele na rok</h1>
+    <div class="year-badge">2026</div>
+  </div>
+  <div class="overall-progress">
+    <div class="progress-label">
+      <span>Ogólny postęp</span>
+      <span id="overallPercent">0%</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="overallBar" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: GOALS -->
+<div class="page active" id="page-goals">
+  <div style="padding: 14px 16px 0;">
+    <div class="filter-row" id="filterRow">
+      <button class="filter-chip active" data-cat="all">Wszystkie</button>
+      <button class="filter-chip" data-cat="documents">📄 Dokumenty</button>
+      <button class="filter-chip" data-cat="family">👨‍👩‍👦 Rodzina</button>
+      <button class="filter-chip" data-cat="health">💪 Zdrowie</button>
+      <button class="filter-chip" data-cat="finance">💰 Finanse</button>
+      <button class="filter-chip" data-cat="travel">✈️ Podróże</button>
+      <button class="filter-chip" data-cat="career">🚀 Kariera</button>
+    </div>
+  </div>
+
+  <div class="sort-row">
+    <span class="sort-label">Sortuj:</span>
+    <button class="sort-btn active">Domyślnie</button>
+    <button class="sort-btn">Priorytet</button>
+    <button class="sort-btn">Postęp</button>
+    <button class="sort-btn">Termin</button>
+  </div>
+
+  <div class="goals-list" id="goalsList"></div>
+</div>
+
+<!-- PAGE: STATS -->
+<div class="page" id="page-stats">
+  <div class="stats-page">
+    <h2>📊 Statystyki</h2>
+    <div class="stats-grid">
+      <div class="stat-card accent"><div class="stat-val">0</div><div class="stat-label">Wszystkich celów</div></div>
+      <div class="stat-card green"><div class="stat-val">0</div><div class="stat-label">Wykonane</div></div>
+      <div class="stat-card gold"><div class="stat-val">0</div><div class="stat-label">W trakcie</div></div>
+      <div class="stat-card blue"><div class="stat-val">0</div><div class="stat-label">Podzadań wykonano</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab">＋</button>
+
+<!-- NAV -->
+<div class="bottom-nav">
+  <button class="nav-btn active">Cele</button>
+  <button class="nav-btn">Postęp</button>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Nowy cel</h2>
+      <p>Dodaj swój cel na 2026</p>
+    </div>
+    <div class="modal-body">
+
+      <div class="form-group">
+        <div class="input-label">Nazwa celu</div>
+        <input class="input-field" placeholder="Np: nauczyć się angielskiego" />
+      </div>
+
+      <div class="form-group">
+        <div class="input-label">Kategoria</div>
+        <select class="input-field">
+          <option>📄 Dokumenty</option>
+          <option>👨‍👩‍👦 Rodzina</option>
+          <option>💪 Zdrowie</option>
+          <option>💰 Finanse</option>
+          <option>✈️ Podróże</option>
+          <option>🚀 Kariera</option>
+          <option>⭐ Inne</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <div class="input-label">Priorytet</div>
+        <select class="input-field">
+          <option>🔴 Wysoki</option>
+          <option>🟡 Średni</option>
+          <option>🔵 Niski</option>
+          <option>⚪ Brak</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <div class="input-label">Typ śledzenia</div>
+        <select class="input-field">
+          <option>✅ Wykonane / Niewykonane</option>
+          <option>🔢 Licznik</option>
+          <option>📋 Lista podzadań</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <div class="input-label">Termin (opcjonalnie)</div>
+        <input type="date" class="input-field">
+      </div>
+
+      <div class="form-group">
+        <div class="input-label">Notatki (opcjonalnie)</div>
+        <textarea class="input-field"></textarea>
+      </div>
+
+      <button class="save-btn">Zapisz cel</button>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
