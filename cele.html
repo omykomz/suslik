@@ -1,94 +1,859 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Цілі</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cele 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-body { font-family: Arial; background:#111; color:#fff; padding:20px; }
-.card { background:#222; padding:15px; border-radius:10px; margin-bottom:10px; }
-button { padding:10px; margin-top:10px; cursor:pointer; }
-.done { opacity:0.5; text-decoration:line-through; }
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --surface3: #242433;
+    --accent: #ff4f4f;
+    --accent2: #ff8c42;
+    --gold: #f5c842;
+    --green: #3de898;
+    --blue: #4f9fff;
+    --purple: #a855f7;
+    --text: #f0f0f8;
+    --text2: #9090a8;
+    --text3: #5a5a70;
+    --border: rgba(255,255,255,0.07);
+    --radius: 18px;
+    --p-high: #ff4f4f;
+    --p-med: #f5c842;
+    --p-low: #4f9fff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    max-width: 430px;
+    margin: 0 auto;
+    overflow-x: hidden;
+    padding-bottom: 90px;
+  }
+
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg);
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .header h1 {
+    font-size: 26px; font-weight: 900; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 0%, #9090a8 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .year-badge { background: var(--accent); color: white; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; }
+
+  .overall-progress { margin-top: 10px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 6px; font-weight: 600; }
+  .progress-bar-wrap { height: 5px; background: var(--surface3); border-radius: 10px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 10px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+
+  .filter-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-chip {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 6px 14px; font-family: 'Manrope', sans-serif; font-size: 12px; font-weight: 700;
+    color: var(--text2); cursor: pointer; white-space: nowrap; transition: all 0.15s; flex-shrink: 0;
+  }
+  .filter-chip.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+  .goals-list { padding: 16px 16px 0; display: flex; flex-direction: column; gap: 10px; }
+
+  .goal-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+    cursor: pointer; transition: all 0.2s ease;
+    position: relative; overflow: hidden;
+  }
+  .goal-card:active { transform: scale(0.98); }
+  .goal-card.done { opacity: 0.55; }
+  .goal-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    border-radius: 3px 0 0 3px; opacity: 1;
+  }
+  .goal-card.prio-high::before { background: var(--p-high); }
+  .goal-card.prio-med::before { background: var(--p-med); }
+  .goal-card.prio-low::before { background: var(--p-low); }
+  .goal-card.has-progress::before { background: var(--accent); }
+  .goal-card.done::before { background: var(--green) !important; }
+
+  .goal-card-header { display: flex; align-items: center; gap: 12px; }
+  .goal-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; background: var(--surface2); }
+  .goal-info { flex: 1; min-width: 0; }
+  .goal-title-row { display: flex; align-items: center; gap: 6px; }
+  .goal-title { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .goal-card.done .goal-title { text-decoration: line-through; color: var(--text2); }
+  .prio-badge { font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; flex-shrink: 0; }
+  .prio-badge.high { background: rgba(255,79,79,0.2); color: var(--p-high); }
+  .prio-badge.med { background: rgba(245,200,66,0.2); color: var(--p-med); }
+  .prio-badge.low { background: rgba(79,159,255,0.2); color: var(--p-low); }
+  .goal-meta { font-size: 11px; color: var(--text2); margin-top: 2px; font-weight: 500; }
+  .goal-meta .highlight { color: var(--accent2); font-weight: 700; }
+  .goal-meta .done-text { color: var(--green); font-weight: 700; }
+  .chevron { color: var(--text3); font-size: 14px; flex-shrink: 0; }
+
+  .counter-mini { display: flex; gap: 4px; margin-top: 10px; flex-wrap: wrap; }
+  .counter-dot { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--surface3); background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: var(--text3); transition: all 0.2s; }
+  .counter-dot.filled { background: var(--green); border-color: var(--green); color: #000; }
+
+  .subtasks-mini { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+  .subtask-mini-row { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); font-weight: 500; }
+  .subtask-mini-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
+  .subtask-mini-dot.done { background: var(--green); }
+  .subtask-mini-text.done { text-decoration: line-through; opacity: 0.5; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; align-items: flex-end; backdrop-filter: blur(4px); }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); width: 100%; max-width: 430px; margin: 0 auto; border-radius: 24px 24px 0 0; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s cubic-bezier(.4,0,.2,1); }
+  @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-handle { width: 36px; height: 4px; background: var(--surface3); border-radius: 2px; margin: 12px auto 0; }
+  .modal-header { padding: 16px 20px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .modal-icon-title { display: flex; align-items: center; gap: 12px; }
+  .modal-icon { width: 52px; height: 52px; border-radius: 16px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .modal-title-block h2 { font-size: 18px; font-weight: 800; line-height: 1.2; }
+  .modal-title-block p { font-size: 12px; color: var(--text2); margin-top: 3px; font-weight: 500; }
+  .modal-header-btns { display: flex; gap: 8px; flex-shrink: 0; }
+  .modal-close, .modal-delete {
+    background: var(--surface2); border: none; width: 32px; height: 32px;
+    border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close { color: var(--text2); }
+  .modal-delete { color: var(--accent); }
+  .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+  .counter-section { background: var(--surface2); border-radius: 16px; padding: 16px; }
+  .counter-section h3 { font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; }
+  .counter-display { display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 16px; }
+  .counter-num { font-size: 56px; font-weight: 900; line-height: 1; background: linear-gradient(135deg, var(--text) 0%, var(--text2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .counter-btn { background: var(--surface3); border: none; color: var(--text); width: 52px; height: 52px; border-radius: 50%; font-size: 24px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .counter-btn:active { transform: scale(0.9); }
+  .counter-btn.plus { background: var(--green); color: #000; }
+  .counter-confirm-btn {
+    background: linear-gradient(135deg, var(--green), #22c55e);
+    border: none; border-radius: 14px; padding: 14px 20px;
+    width: 100%; font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 800;
+    color: #000; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 12px;
+  }
+  .counter-confirm-btn:active { transform: scale(0.97); }
+  .counter-confirm-btn:disabled { background: var(--surface3); color: var(--text3); cursor: default; }
+
+  .counter-dots { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .counter-dot-lg { width: 32px; height: 32px; border-radius: 8px; border: 1.5px solid var(--surface3); background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: var(--text3); transition: all 0.2s; cursor: pointer; }
+  .counter-dot-lg.filled { background: var(--green); border-color: var(--green); color: #000; }
+
+  .checklist-section { display: flex; flex-direction: column; gap: 8px; }
+  .section-title { font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  .subtask-row { background: var(--surface2); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s; border: 1px solid transparent; }
+  .subtask-row:active { background: var(--surface3); }
+  .subtask-row.done-task { opacity: 0.5; }
+  .check-box { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--surface3); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.15s; background: var(--surface); }
+  .check-box.checked { background: var(--green); border-color: var(--green); color: #000; }
+  .subtask-text { font-size: 14px; font-weight: 600; flex: 1; line-height: 1.3; }
+  .subtask-row.done-task .subtask-text { text-decoration: line-through; color: var(--text2); }
+  .subtask-delete-btn { background: none; border: none; color: var(--text3); font-size: 16px; cursor: pointer; padding: 0 2px; flex-shrink: 0; transition: color 0.15s; }
+  .subtask-delete-btn:active { color: var(--accent); }
+
+  .add-input-row { display: flex; gap: 8px; }
+  .add-input-row .input-field { flex: 1; }
+  .add-subtask { background: transparent; border: 1.5px dashed var(--surface3); border-radius: 12px; padding: 11px 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.15s; width: 100%; }
+  .add-subtask:active { border-color: var(--accent); }
+  .add-subtask span { font-size: 13px; color: var(--text3); font-weight: 600; font-family: 'Manrope', sans-serif; }
+
+  .notes-textarea { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; color: var(--text); font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 500; resize: none; width: 100%; min-height: 80px; outline: none; transition: border-color 0.15s; }
+  .notes-textarea:focus { border-color: var(--accent); }
+  .notes-textarea::placeholder { color: var(--text3); }
+
+  .complete-btn { background: var(--green); color: #000; border: none; border-radius: 14px; padding: 16px; width: 100%; font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.15s; }
+  .complete-btn:active { transform: scale(0.98); }
+  .complete-btn.undo-btn { background: var(--surface3); color: var(--text2); }
+
+  .delete-confirm-box { background: rgba(255,79,79,0.1); border: 1px solid rgba(255,79,79,0.3); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .delete-confirm-box p { font-size: 14px; font-weight: 600; color: var(--text); }
+  .delete-confirm-row { display: flex; gap: 10px; }
+  .btn-cancel { flex: 1; background: var(--surface3); color: var(--text2); border: none; border-radius: 12px; padding: 12px; font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .btn-delete-confirm { flex: 1; background: var(--accent); color: white; border: none; border-radius: 12px; padding: 12px; font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+  .prio-selector { display: flex; gap: 8px; }
+  .prio-opt {
+    flex: 1; padding: 10px 6px; border-radius: 12px; border: 1.5px solid var(--surface3);
+    background: var(--surface2); font-family: 'Manrope', sans-serif; font-size: 12px; font-weight: 700;
+    cursor: pointer; text-align: center; transition: all 0.15s; color: var(--text2);
+  }
+  .prio-opt.sel-high { background: rgba(255,79,79,0.2); border-color: var(--p-high); color: var(--p-high); }
+  .prio-opt.sel-med { background: rgba(245,200,66,0.2); border-color: var(--p-med); color: var(--p-med); }
+  .prio-opt.sel-low { background: rgba(79,159,255,0.2); border-color: var(--p-low); color: var(--p-low); }
+  .prio-opt.sel-none { background: var(--surface2); border-color: var(--surface3); color: var(--text3); }
+
+  .fab { position: fixed; bottom: 100px; right: 20px; width: 56px; height: 56px; background: var(--accent); border-radius: 50%; border: none; color: white; font-size: 24px; cursor: pointer; box-shadow: 0 8px 24px rgba(255,79,79,0.4); transition: all 0.2s; display: flex; align-items: center; justify-content: center; z-index: 150; }
+  .fab:active { transform: scale(0.9); }
+
+  .input-field { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 13px 14px; color: var(--text); font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; width: 100%; outline: none; transition: border-color 0.15s; }
+  .input-field:focus { border-color: var(--accent); }
+  .input-field::placeholder { color: var(--text3); font-weight: 500; }
+  select.input-field { appearance: none; -webkit-appearance: none; cursor: pointer; }
+  .input-label { font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+  .form-group { display: flex; flex-direction: column; gap: 0; }
+
+  .emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-top: 4px; }
+  .emoji-btn { background: var(--surface2); border: 1.5px solid transparent; border-radius: 10px; width: 100%; aspect-ratio: 1; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .emoji-btn.selected { border-color: var(--accent); background: rgba(255,79,79,0.15); }
+
+  .save-btn { background: var(--accent); color: white; border: none; border-radius: 14px; padding: 16px; width: 100%; font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.15s; }
+  .save-btn:active { transform: scale(0.98); opacity: 0.9; }
+
+  .mini-btn { background: var(--accent); border: none; border-radius: 10px; padding: 0 14px; color: white; font-family: 'Manrope', sans-serif; font-size: 20px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: all 0.15s; }
+  .mini-btn:active { transform: scale(0.95); }
+
+  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding: 10px 0 20px; z-index: 100; }
+  .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; cursor: pointer; color: var(--text3); font-family: 'Manrope', sans-serif; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 0 16px; transition: color 0.15s; }
+  .nav-btn.active { color: var(--accent); }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .stats-page { padding: 20px 16px; display: flex; flex-direction: column; gap: 16px; }
+  .stats-page h2 { font-size: 22px; font-weight: 900; margin-bottom: 4px; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+  .stat-card .stat-val { font-size: 32px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+  .stat-card .stat-label { font-size: 11px; color: var(--text2); font-weight: 600; }
+  .stat-card.accent .stat-val { color: var(--accent); }
+  .stat-card.green .stat-val { color: var(--green); }
+  .stat-card.gold .stat-val { color: var(--gold); }
+  .stat-card.blue .stat-val { color: var(--blue); }
+
+  .progress-circle { display: flex; align-items: center; gap: 12px; background: var(--surface2); border-radius: 16px; padding: 14px 16px; }
+  .circle-svg { flex-shrink: 0; }
+  .circle-info h3 { font-size: 16px; font-weight: 800; }
+  .circle-info p { font-size: 12px; color: var(--text2); margin-top: 2px; font-weight: 500; }
+
+  .divider-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; padding: 4px 0; }
+
+  .deadline-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: var(--surface3); color: var(--text2); display: inline-flex; align-items: center; gap: 3px; margin-top: 4px; }
+  .deadline-badge.overdue { background: rgba(255,79,79,0.15); color: var(--accent); }
+  .deadline-badge.soon { background: rgba(245,200,66,0.15); color: var(--gold); }
+
+  .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 18px; font-size: 13px; font-weight: 700; color: var(--text); z-index: 999; opacity: 0; transition: all 0.3s; white-space: nowrap; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .sort-row { display: flex; gap: 8px; align-items: center; padding: 0 16px; margin-top: 10px; }
+  .sort-label { font-size: 11px; font-weight: 700; color: var(--text3); white-space: nowrap; }
+  .sort-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 5px 10px; font-family: 'Manrope', sans-serif; font-size: 11px; font-weight: 700; color: var(--text2); cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+  .sort-btn.active { background: var(--surface2); border-color: var(--accent); color: var(--accent); }
+
+  @keyframes pulse-green { 0%,100% { box-shadow: 0 0 0 0 rgba(61,232,152,0.4); } 50% { box-shadow: 0 0 0 8px rgba(61,232,152,0); } }
+  .counter-confirm-btn.pulse { animation: pulse-green 1.5s infinite; }
 </style>
 </head>
 <body>
 
-<h2>Мої цілі</h2>
-<div id="list"></div>
+<div class="toast" id="toast"></div>
+
+<div class="header" id="mainHeader">
+  <div class="header-top">
+    <h1>Cele na rok</h1>
+    <div class="year-badge">2026</div>
+  </div>
+  <div class="overall-progress">
+    <div class="progress-label">
+      <span>Ogólny postęp</span>
+      <span id="overallPercent">0%</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="overallBar" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<div class="page active" id="page-goals">
+  <div style="padding: 14px 16px 0;">
+    <div class="filter-row" id="filterRow">
+      <button class="filter-chip active" data-cat="all" onclick="filterGoals(this)">Wszystkie</button>
+      <button class="filter-chip" data-cat="travel" onclick="filterGoals(this)">✈️ Podróże</button>
+      <button class="filter-chip" data-cat="health" onclick="filterGoals(this)">🏥 Zdrowie</button>
+    </div>
+  </div>
+
+  <div class="sort-row">
+    <span class="sort-label">Sort:</span>
+    <button class="sort-btn active" id="sort-default" onclick="setSort('default', this)">Domyślny</button>
+    <button class="sort-btn" id="sort-priority" onclick="setSort('priority', this)">Priorytet</button>
+    <button class="sort-btn" id="sort-progress" onclick="setSort('progress', this)">Postęp</button>
+    <button class="sort-btn" id="sort-deadline" onclick="setSort('deadline', this)">Termin</button>
+  </div>
+
+  <div class="goals-list" id="goalsList"></div>
+  <div style="height: 20px;"></div>
+</div>
+
+<div class="page" id="page-stats">
+  <div class="stats-page">
+    <h2>📊 Statystyki</h2>
+    <div class="stats-grid">
+      <div class="stat-card accent"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Wszystkich celów</div></div>
+      <div class="stat-card green"><div class="stat-val" id="statDone">0</div><div class="stat-label">Ukończonych</div></div>
+      <div class="stat-card gold"><div class="stat-val" id="statInProgress">0</div><div class="stat-label">W trakcie</div></div>
+      <div class="stat-card blue"><div class="stat-val" id="statSubtasks">0</div><div class="stat-label">Podzadań ukończonych</div></div>
+    </div>
+    <div class="progress-circle" id="statsRing"></div>
+    <div id="statsExtra" style="display:flex;flex-direction:column;gap:10px;"></div>
+    <div id="statsGoalsList" style="display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+</div>
+
+<button class="fab" onclick="openAddModal()">＋</button>
+
+<div class="bottom-nav">
+  <button class="nav-btn active" id="nav-goals" onclick="showPage('goals')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    Cele
+  </button>
+  <button class="nav-btn" id="nav-stats" onclick="showPage('stats')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Postęp
+  </button>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal" id="detailModalContent">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-icon-title">
+        <div class="modal-icon" id="detailIcon"></div>
+        <div class="modal-title-block">
+          <h2 id="detailTitle"></h2>
+          <p id="detailCategory"></p>
+        </div>
+      </div>
+      <div class="modal-header-btns">
+        <button class="modal-delete" onclick="promptDeleteGoal()" title="Usuń">🗑</button>
+        <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+  </div>
+</div>
+
+<!-- ADD GOAL MODAL -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-icon-title">
+        <div class="modal-icon">✨</div>
+        <div class="modal-title-block"><h2>Nowy cel</h2><p>Dodaj swój cel na 2026</p></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <div class="input-label">Nazwa celu</div>
+        <input class="input-field" id="newGoalTitle" placeholder="Np.: Nauczyć się angielskiego" />
+      </div>
+      <div class="form-group">
+        <div class="input-label">Ikona</div>
+        <div class="emoji-grid" id="emojiGrid"></div>
+      </div>
+      <div class="form-group">
+        <div class="input-label">Kategoria</div>
+        <select class="input-field" id="newGoalCat">
+          <option value="travel">✈️ Podróże</option>
+          <option value="health">🏥 Zdrowie</option>
+          <option value="documents">📄 Dokumenty</option>
+          <option value="family">👨‍👩‍👦 Rodzina</option>
+          <option value="finance">💰 Finanse</option>
+          <option value="career">🚀 Kariera</option>
+          <option value="other">⭐ Inne</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <div class="input-label">Priorytet</div>
+        <div class="prio-selector" id="newGoalPrioSelector">
+          <button class="prio-opt" data-prio="high" onclick="selectPrio('high', this)">🔴 Wysoki</button>
+          <button class="prio-opt sel-med" data-prio="med" onclick="selectPrio('med', this)">🟡 Średni</button>
+          <button class="prio-opt" data-prio="low" onclick="selectPrio('low', this)">🔵 Niski</button>
+          <button class="prio-opt" data-prio="none" onclick="selectPrio('none', this)">⚪ Brak</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-label">Typ śledzenia</div>
+        <select class="input-field" id="newGoalType" onchange="toggleCounterTarget()">
+          <option value="checkbox">✅ Wykonane / Niewykonane</option>
+          <option value="counter">🔢 Licznik</option>
+          <option value="checklist">📋 Lista zadań</option>
+        </select>
+      </div>
+      <div id="counterTargetGroup" style="display:none;" class="form-group">
+        <div class="input-label">Ile razy potrzeba?</div>
+        <input class="input-field" id="newGoalTarget" type="number" min="1" max="365" placeholder="Np.: 4" value="4" />
+      </div>
+      <div class="form-group">
+        <div class="input-label">Termin (opcjonalnie)</div>
+        <input class="input-field" id="newGoalDeadline" type="date" style="color-scheme:dark;" />
+      </div>
+      <div class="form-group">
+        <div class="input-label">Notatki (opcjonalnie)</div>
+        <textarea class="input-field notes-textarea" id="newGoalNotes" placeholder="Szczegóły, ważne kroki..."></textarea>
+      </div>
+      <button class="save-btn" onclick="saveNewGoal()">Zapisz cel</button>
+    </div>
+  </div>
+</div>
 
 <script>
-let goals = [
-  {
-    id: 1,
-    title: 'Аналізи',
-    type: 'checklist',
-    done: false,
-    subtasks: [
-      { id: 1, text: 'Загальний аналіз крові', done: false },
-      { id: 2, text: 'Гормони щитовидки', done: false },
-      { id: 3, text: 'УЗД', done: false },
-      { id: 4, text: 'Візит до лікаря', done: false }
-    ]
-  },
-  {
-    id: 2,
-    title: 'Відпочити мінімум 4 рази',
-    type: 'counter',
-    done: false,
-    current: 0,
-    target: 4
-  }
-];
+let goals = JSON.parse(localStorage.getItem('goals2026pl') || 'null');
 
-function render() {
-  const el = document.getElementById('list');
-  el.innerHTML = '';
-
-  goals.forEach(g => {
-    const div = document.createElement('div');
-    div.className = 'card ' + (g.done ? 'done' : '');
-
-    if (g.type === 'checklist') {
-      div.innerHTML = `<b>${g.title}</b><br>` +
-        g.subtasks.map(s =>
-          `<div>
-            <input type="checkbox" ${s.done?'checked':''}
-              onchange="toggleSub(${g.id},${s.id})">
-            ${s.text}
-          </div>`
-        ).join('');
+if (!goals) {
+  goals = [
+    {
+      id: 1,
+      title: 'Min. 4 razy pojechać na wakacje',
+      icon: '✈️',
+      category: 'travel',
+      type: 'counter',
+      done: false,
+      notes: '',
+      priority: 'med',
+      deadline: '',
+      current: 0,
+      target: 4,
+      subtasks: []
+    },
+    {
+      id: 2,
+      title: 'Badania żony',
+      icon: '🏥',
+      category: 'health',
+      type: 'checklist',
+      done: false,
+      notes: '',
+      priority: 'high',
+      deadline: '',
+      subtasks: [
+        { id: 1, text: 'Morfologia krwi', done: false },
+        { id: 2, text: 'Hormony tarczycy', done: false },
+        { id: 3, text: 'USG', done: false },
+        { id: 4, text: 'Wizyta u lekarza', done: false }
+      ]
     }
+  ];
+  save();
+}
 
-    if (g.type === 'counter') {
-      div.innerHTML = `<b>${g.title}</b><br>
-        ${g.current} / ${g.target}<br>
-        <button onclick="add(${g.id})">+1</button>`;
-    }
+goals.forEach(g => {
+  if (!g.priority) g.priority = 'none';
+  if (g.deadline === undefined) g.deadline = '';
+  if (g.subtasks === undefined) g.subtasks = [];
+});
 
-    el.appendChild(div);
+const EMOJIS = ['🎯','🏆','💡','🔥','⚡','🌟','💎','🚀','🛂','📋','🚗','🛍️','✈️','🌿','🏥','💪','💼','🎥','🌐','👶','💰','📚','🎓','🎵','🏠','❤️','🤝','🎁','🌈','🦁'];
+const CAT_NAMES = {
+  documents: '📄 Dokumenty',
+  family: '👨‍👩‍👦 Rodzina',
+  health: '🏥 Zdrowie',
+  finance: '💰 Finanse',
+  travel: '✈️ Podróże',
+  career: '🚀 Kariera',
+  other: '⭐ Inne'
+};
+const PRIO_ORDER = { high: 0, med: 1, low: 2, none: 3 };
+
+let selectedEmoji = '🎯';
+let selectedNewPrio = 'med';
+let currentFilter = 'all';
+let currentSort = 'default';
+let currentGoalId = null;
+let pendingCounterChange = 0;
+
+function save() { localStorage.setItem('goals2026pl', JSON.stringify(goals)); }
+
+function setSort(type, btn) {
+  currentSort = type;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGoals();
+}
+
+function getSortedGoals(list) {
+  const active = list.filter(g => !g.done);
+  const done = list.filter(g => g.done);
+  if (currentSort === 'priority') active.sort((a, b) => PRIO_ORDER[a.priority || 'none'] - PRIO_ORDER[b.priority || 'none']);
+  else if (currentSort === 'progress') active.sort((a, b) => getGoalProgress(b) - getGoalProgress(a));
+  else if (currentSort === 'deadline') active.sort((a, b) => {
+    if (!a.deadline && !b.deadline) return 0;
+    if (!a.deadline) return 1;
+    if (!b.deadline) return -1;
+    return new Date(a.deadline) - new Date(b.deadline);
   });
+  return { active, done };
 }
 
-function toggleSub(goalId, subId) {
-  const g = goals.find(x=>x.id===goalId);
-  const s = g.subtasks.find(x=>x.id===subId);
-  s.done = !s.done;
-
-  if (g.subtasks.every(x=>x.done)) g.done = true;
-  else g.done = false;
-
-  render();
+function renderGoals() {
+  const list = document.getElementById('goalsList');
+  const filtered = currentFilter === 'all' ? goals : goals.filter(g => g.category === currentFilter);
+  const { active, done } = getSortedGoals(filtered);
+  let html = active.map(g => goalCardHTML(g)).join('');
+  if (done.length) {
+    html += `<div class="divider-label" style="padding:8px 4px 0;">✅ Ukończone (${done.length})</div>`;
+    html += done.map(g => goalCardHTML(g)).join('');
+  }
+  list.innerHTML = html;
+  updateOverallProgress();
 }
 
-function add(id) {
-  const g = goals.find(x=>x.id===id);
-  g.current++;
-  if (g.current >= g.target) g.done = true;
-  render();
+function deadlineBadgeHTML(g) {
+  if (!g.deadline || g.done) return '';
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const dl = new Date(g.deadline);
+  const diff = Math.ceil((dl - now) / 86400000);
+  if (diff < 0) return `<div class="deadline-badge overdue">⚠️ Przeterminowane ${Math.abs(diff)} dni</div>`;
+  if (diff <= 7) return `<div class="deadline-badge soon">⏰ ${diff} dni pozostało</div>`;
+  return `<div class="deadline-badge">📅 ${dl.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' })}</div>`;
 }
 
-render();
-</script>
+function goalCardHTML(g) {
+  let metaHTML = '', extraHTML = '';
+  const prioClass = g.priority && g.priority !== 'none' ? `prio-${g.priority}` : '';
+  const prioLabel = { high: '🔴 Wysoki', med: '🟡 Średni', low: '🔵 Niski' };
+  const prioBadge = g.priority && g.priority !== 'none' ? `<span class="prio-badge ${g.priority}">${prioLabel[g.priority]}</span>` : '';
 
-</body>
-</html></html>
+  if (g.type === 'counter') {
+    const left = g.target - g.current;
+    metaHTML = g.done
+      ? `<span class="done-text">✅ Ukończono ${g.target}/${g.target}</span>`
+      : g.current > 0
+        ? `<span class="highlight">${g.current} z ${g.target}</span> — pozostało ${left}`
+        : `Potrzeba: ${g.target} razy`;
+    const max = Math.min(g.target, 12);
+    let dots = '';
+    for (let i = 0; i < max; i++) dots += `<div class="counter-dot ${i < g.current ? 'filled' : ''}">${i < g.current ? '✓' : ''}</div>`;
+    if (g.target > 12) dots += `<div class="counter-dot" style="font-size:8px;">+${g.target - 12}</div>`;
+    extraHTML = `<div class="counter-mini">${dots}</div>`;
+  } else if (g.type === 'checklist') {
+    const total = g.subtasks.length;
+    const doneCount = g.subtasks.filter(s => s.done).length;
+    metaHTML = g.done
+      ? `<span class="done-text">✅ Wszystkie zadania ukończone</span>`
+      : total > 0 ? `${doneCount} z ${total} kroków ukończono` : 'Brak zadań';
+    const preview = g.subtasks.slice(0, 3);
+    if (preview.length) extraHTML = `<div class="subtasks-mini">${preview.map(s => `<div class="subtask-mini-row"><div class="subtask-mini-dot ${s.done ? 'done' : ''}"></div><span class="subtask-mini-text ${s.done ? 'done' : ''}">${s.text}</span></div>`).join('')}${g.subtasks.length > 3 ? `<div class="subtask-mini-row"><div class="subtask-mini-dot"></div><span class="subtask-mini-text" style="color:var(--text3)">jeszcze ${g.subtasks.length - 3}...</span></div>` : ''}</div>`;
+  } else {
+    metaHTML = g.done ? `<span class="done-text">✅ Ukończono</span>` : 'Kliknij, aby oznaczyć';
+  }
+
+  const hasProgress = g.type === 'counter' ? g.current > 0 : g.subtasks.some(s => s.done);
+  const cardClass = g.done ? 'done' : prioClass || (hasProgress ? 'has-progress' : '');
+
+  return `<div class="goal-card ${cardClass}" onclick="openDetail(${g.id})">
+    <div class="goal-card-header">
+      <div class="goal-icon">${g.icon}</div>
+      <div class="goal-info">
+        <div class="goal-title-row">
+          <div class="goal-title">${g.title}</div>
+          ${!g.done ? prioBadge : ''}
+        </div>
+        <div class="goal-meta">${metaHTML}</div>
+        ${deadlineBadgeHTML(g)}
+      </div>
+      <span class="chevron">›</span>
+    </div>
+    ${extraHTML}
+  </div>`;
+}
+
+function openDetail(id) {
+  const g = goals.find(x => x.id === id);
+  if (!g) return;
+  currentGoalId = id;
+  pendingCounterChange = 0;
+
+  document.getElementById('detailIcon').textContent = g.icon;
+  document.getElementById('detailTitle').textContent = g.title;
+  document.getElementById('detailCategory').textContent = CAT_NAMES[g.category] || '';
+
+  const body = document.getElementById('detailBody');
+  let html = '';
+
+  const prioLabels = { high: '🔴 Wysoki', med: '🟡 Średni', low: '🔵 Niski', none: '⚪ Brak' };
+  html += `<div>
+    <div class="section-title" style="margin-bottom:8px;">⚡ Priorytet</div>
+    <div class="prio-selector">
+      ${['high', 'med', 'low', 'none'].map(p => `<button class="prio-opt ${g.priority === p ? 'sel-' + p : ''}" onclick="setGoalPriority(${id},'${p}', this)">${prioLabels[p]}</button>`).join('')}
+    </div>
+  </div>`;
+
+  html += `<div class="form-group">
+    <div class="section-title" style="margin-bottom:8px;">📅 Termin</div>
+    <input class="input-field" type="date" style="color-scheme:dark;" value="${g.deadline || ''}" onchange="setGoalDeadline(${id}, this.value)" />
+  </div>`;
+
+  if (g.type === 'counter') {
+    const pct = g.target > 0 ? Math.round((g.current / g.target) * 100) : 0;
+    let dots = '';
+    for (let i = 0; i < g.target; i++) dots += `<div class="counter-dot-lg ${i < g.current ? 'filled' : ''}" onclick="toggleCounterDot(${id}, ${i})">${i < g.current ? '✓' : i + 1}</div>`;
+
+    html += `<div class="counter-section">
+      <h3>Postęp — naciśnij + a potem "Potwierdź"</h3>
+      <div class="counter-display">
+        <button class="counter-btn minus" onclick="changeCounter(${id}, -1)">−</button>
+        <div style="text-align:center;">
+          <div class="counter-num" id="counterNum_${id}">${g.current}</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:600;margin-top:2px;">z ${g.target} razy</div>
+        </div>
+        <button class="counter-btn plus" onclick="changeCounter(${id}, 1)">+</button>
+      </div>
+      <div class="counter-dots" id="counterDots_${id}">${dots}</div>
+      <div style="margin-top:14px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);font-weight:600;margin-bottom:6px;"><span>Postęp</span><span id="counterPct_${id}">${pct}%</span></div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="counterBar_${id}" style="width:${pct}%;background:${pct === 100 ? 'var(--green)' : 'linear-gradient(90deg,var(--accent),var(--accent2))'}"></div></div>
+      </div>
+      <button class="counter-confirm-btn ${pendingCounterChange > 0 ? 'pulse' : ''}" id="confirmBtn_${id}" onclick="confirmCounter(${id})" ${pendingCounterChange === 0 ? 'disabled' : ''}>
+        ✅ Potwierdź +${pendingCounterChange}
+      </button>
+    </div>`;
+
+    if (g.current < g.target) {
+      html += `<div style="background:var(--surface2);border-radius:14px;padding:14px;text-align:center;">
+        <div style="font-size:28px;font-weight:900;color:var(--accent2);">${g.target - g.current}</div>
+        <div style="font-size:12px;color:var(--text2);font-weight:600;">pozostało do wykonania</div>
+      </div>`;
+    }
+
+  } else if (g.type === 'checklist') {
+    const doneCount = g.subtasks.filter(s => s.done).length;
+    const total = g.subtasks.length;
+    const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+
+    html += `<div class="checklist-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div class="section-title" style="margin:0;">📋 Kroki (${doneCount}/${total})</div>
+        <div style="font-size:12px;color:var(--text2);font-weight:700;">${pct}%</div>
+      </div>
+      <div class="progress-bar-wrap" style="margin-bottom:12px;">
+        <div class="progress-bar-fill" style="width:${pct}%;background:${pct === 100 ? 'var(--green)' : 'linear-gradient(90deg,var(--accent),var(--accent2))'}"></div>
+      </div>
+      ${g.subtasks.map(s => `<div class="subtask-row ${s.done ? 'done-task' : ''}" onclick="toggleSubtask(${id},${s.id})">
+        <div class="check-box ${s.done ? 'checked' : ''}">${s.done ? '✓' : ''}</div>
+        <span class="subtask-text">${s.text}</span>
+        <button class="subtask-delete-btn" onclick="event.stopPropagation();deleteSubtask(${id},${s.id})">✕</button>
+      </div>`).join('')}
+      <div id="addSubtaskRow${id}" class="add-input-row" style="margin-top:4px;display:none;">
+        <input class="input-field" id="newSubtaskInput${id}" placeholder="Nowy krok..." style="font-size:13px;padding:10px 12px;" onkeydown="if(event.key==='Enter')addSubtask(${id})" />
+        <button class="mini-btn" onclick="addSubtask(${id})">＋</button>
+      </div>
+      <button class="add-subtask" onclick="showAddSubtask(${id})"><span>＋ Dodaj krok</span></button>
+    </div>`;
+  }
+
+  html += `<div>
+    <div class="section-title" style="margin-bottom:8px;">✏️ Notatki</div>
+    <textarea class="notes-textarea" id="notesField${id}" placeholder="Dodaj notatki..." onblur="saveNotes(${id})">${g.notes || ''}</textarea>
+  </div>`;
+
+  html += `<button class="${g.done ? 'complete-btn undo-btn' : 'complete-btn'}" onclick="toggleGoalDone(${id})">${g.done ? '↩ Przywróć cel' : '✅ Oznacz jako ukończony'}</button>`;
+  html += `<div id="deleteConfirmArea${id}"></div>`;
+  html += `<div style="height:8px;"></div>`;
+
+  body.innerHTML = html;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  if (id === 'detailModal') { renderGoals(); updateStats(); }
+}
+
+function changeCounter(goalId, delta) {
+  const g = goals.find(x => x.id === goalId);
+  if (!g) return;
+  const newVal = Math.max(0, Math.min(g.target, g.current + pendingCounterChange + delta));
+  pendingCounterChange = Math.max(0, newVal - g.current);
+
+  const numEl = document.getElementById(`counterNum_${goalId}`);
+  const pctEl = document.getElementById(`counterPct_${goalId}`);
+  const barEl = document.getElementById(`counterBar_${goalId}`);
+  const btnEl = document.getElementById(`confirmBtn_${goalId}`);
+  const dotsEl = document.getElementById(`counterDots_${goalId}`);
+
+  const displayVal = g.current + pendingCounterChange;
+  const pct = g.target > 0 ? Math.round((displayVal / g.target) * 100) : 0;
+
+  if (numEl) numEl.textContent = displayVal;
+  if (pctEl) pctEl.textContent = pct + '%';
+  if (barEl) { barEl.style.width = pct + '%'; barEl.style.background = pct === 100 ? 'var(--green)' : 'linear-gradient(90deg,var(--accent),var(--accent2))'; }
+  if (btnEl) {
+    btnEl.textContent = pendingCounterChange > 0 ? `✅ Potwierdź +${pendingCounterChange}` : '✅ Potwierdź';
+    btnEl.disabled = pendingCounterChange === 0;
+    if (pendingCounterChange > 0) btnEl.classList.add('pulse'); else btnEl.classList.remove('pulse');
+  }
+  if (dotsEl) {
+    let dots = '';
+    for (let i = 0; i < g.target; i++) dots += `<div class="counter-dot-lg ${i < displayVal ? 'filled' : ''}" onclick="toggleCounterDot(${goalId}, ${i})">${i < displayVal ? '✓' : i + 1}</div>`;
+    dotsEl.innerHTML = dots;
+  }
+}
+
+function confirmCounter(goalId) {
+  const g = goals.find(x => x.id === goalId);
+  if (!g || pendingCounterChange === 0) return;
+  g.current = Math.min(g.target, g.current + pendingCounterChange);
+  if (g.current >= g.target) { g.done = true; showToast('🎉 Cel ukończony!'); }
+  else showToast(`✅ +${pendingCounterChange} zapisano! Pozostało ${g.target - g.current}`);
+  pendingCounterChange = 0;
+  save();
+  openDetail(goalId);
+}
+
+function toggleCounterDot(goalId, index) {
+  const g = goals.find(x => x.id === goalId);
+  if (!g) return;
+  pendingCounterChange = 0;
+  if (index === g.current - 1) g.current = Math.max(0, g.current - 1);
+  else g.current = index + 1;
+  if (g.current >= g.target) { g.done = true; showToast('🎉 Cel ukończony!'); }
+  save();
+  openDetail(goalId);
+}
+
+function toggleSubtask(goalId, subtaskId) {
+  const g = goals.find(x => x.id === goalId);
+  if (!g) return;
+  const s = g.subtasks.find(x => x.id === subtaskId);
+  if (s) s.done = !s.done;
+  const allDone = g.subtasks.length > 0 && g.subtasks.every(s => s.done);
+  if (allDone) { g.done = true; showToast('🎉 Wszystkie kroki ukończone!'); } else g.done = false;
+  save(); openDetail(goalId);
+}
+
+function deleteSubtask(goalId, subtaskId) {
+  const g = goals.find(x => x.id === goalId);
+  if (!g) return;
+  g.subtasks = g.subtasks.filter(s => s.id !== subtaskId);
+  save(); openDetail(goalId);
+}
+
+function showAddSubtask(goalId) {
+  const row = document.getElementById(`addSubtaskRow${goalId}`);
+  if (row) { row.style.display = 'flex'; document.getElementById(`newSubtaskInput${goalId}`).focus(); }
+}
+
+function addSubtask(goalId) {
+  const input = document.getElementById(`newSubtaskInput${goalId}`);
+  const text = input.value.trim();
+  if (!text) return;
+  const g = goals.find(x => x.id === goalId);
+  if (!g) return;
+  const newId = g.subtasks.length > 0 ? Math.max(...g.subtasks.map(s => s.id)) + 1 : 1;
+  g.subtasks.push({ id: newId, text, done: false });
+  g.done = false;
+  save(); openDetail(goalId);
+}
+
+function saveNotes(goalId) {
+  const g = goals.find(x => x.id === goalId);
+  if (!g) return;
+  const field = document.getElementById(`notesField${goalId}`);
+  if (field) { g.notes = field.value; save(); }
+}
+
+function toggleGoalDone(goalId) {
+  const g = goals.find(x => x.id === goalId);
+  if (!g) return;
+  g.done = !g.done;
+  if (g.done && g.type === 'counter') g.current = g.target;
+  if (!g.done && g.type === 'counter') g.current = Math.min(g.current, g.target - 1);
+  save();
+  showToast(g.done ? '🎉 Cel ukończony!' : 'Cel przywrócony');
+  closeModal('detailModal');
+}
+
+function setGoalPriority(goalId, prio, btn) {
+  const g = goals.find(x => x.id === goalId);
+  if (!g) return;
+  g.priority = prio;
+  save();
+  btn.closest('.prio-selector').querySelectorAll('.prio-opt').forEach(b => {
+    b.className = 'prio-opt';
+    if (b === btn) b.classList.add('sel-' + prio);
+  });
+  showToast('Priorytet zapisany');
+}
+
+function setGoalDeadline(goalId, val) {
+  const g = goals.find(x => x.id === goalId);
+  if (!g) return;
+  g.deadline = val;
+  save();
+  showToast('Termin zapisany');
+}
+
+function promptDeleteGoal() {
+  if (!currentGoalId) return;
+  const id = currentGoalId;
+  const area = document.getElementById(`deleteConfirmArea${id}`);
+  if (!area) return;
+  area.innerHTML = `<div class="delete-confirm-box">
+    <p>🗑 Usunąć ten cel na zawsze?</p>
+    <div class="delete-confirm-row">
+      <button class="btn-cancel" onclick="document.getElementById('deleteConfirmArea${id}').innerHTML=''">Anuluj</button>
+      <button class="btn-delete-confirm" onclick="deleteGoal(${id})">Tak, usuń</button>
+    </div>
+  </div>`;
+  area.scrollIntoView({ behavior: 'smooth' });
+}
+
+function deleteGoal(id) {
+  goals = goals.filter(g => g.id !== id);
+  save();
+  showToast('🗑 Cel usunięty');
+  closeModal('detailModal');
+}
+
+function getGoalProgress(g) {
+  if (g.done) return 1;
+  if (g.type === 'counter') return g.target > 0 ? g.current / g.target : 0;
+  if (g.type === 'checklist') return g.subtasks.length === 0 ? 0 : g.subtasks.filter(s => s.done).length / g.subtasks.length;
+  return 0;
+}
+
+function updateOverallProgress() {
+  if (goals.length === 0) { document.getElementById('overallBar').style.width = '0%'; document.getElementById('overallPercent').textContent = '0%'; return; }
+  const total = goals.reduce((sum, g) => sum + getGoalProgress(g), 0);
+  const pct = Math.round((total / goals.length) * 100);
+  document.getElementById('overallBar').style.width = pct + '%';
+  document.getElementById('overallPercent').textContent = pct + '%';
+}
+
+function updateStats() {
+  document.getElementById('statTotal').textContent = goals.length;
+  document.getElementById('statDone').textContent = goals.filter(g => g.done).length;
+  document.getElementById('statInProgress').textContent = goals.filter(g => !g.done && getGoalProgress(g) > 0).length;
+  let subtasksDone = 0;
+  goals.forEach(g => {
+    if (g.subtasks) subtasksDone += g.subtasks.filter(s => s.done).length;
+    if (g.type === 'counter') subtasksDone += g.current;
+  });
+  document.getElementById('statSubtasks').textContent = subtasksDone;
+
+  const total = goals.length, done = goals.filter(g => g.done).length;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const r = 30, circ = 2 * Math.PI * r, offset = circ - (pct / 100) * circ;
+  document.getElementById('statsRing').innerHTML = `<svg class="circle-svg" width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="${r}" fill="none" stroke="var(--surface3)" stroke-width="7"/><circle cx="40" cy="40" r="${r}" fill="none" stroke="${pct === 100 ? 'var(--green)' : 'var(--accent)'}" stroke-width="7" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round" transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 0.6s"/><text x="40" y="46" text-anchor="middle" fill="white" font-size="14" font-weight="900" font-family="Manrope">${pct}%</text></svg><div class="circle-info"><h3>Ogólny postęp</h3><p>${done} z ${total} celów ukończonych</p></div>`;
+
+  const highDone = goals.filter(g => g.priority === 'high' && g.done).length, highTotal = goals.filter(g => g.priority === 'high').length;
+  const medDone = goals.filter(g => g.priority === 'med' && g.done).length, medTotal = goals.f
+Done
+Taking longer than usual.
