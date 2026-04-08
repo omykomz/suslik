@@ -80,12 +80,13 @@
   .goal-card.done { opacity: 0.55; }
   .goal-card::before {
     content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-    border-radius: 3px 0 0 3px; opacity: 1;
+    background: var(--accent); border-radius: 3px 0 0 3px; opacity: 0; transition: opacity 0.2s;
   }
-  .goal-card.prio-high::before { background: var(--p-high); }
-  .goal-card.prio-med::before { background: var(--p-med); }
-  .goal-card.prio-low::before { background: var(--p-low); }
-  .goal-card.has-progress::before { background: var(--accent); }
+  .goal-card.has-progress::before, .goal-card.done::before { opacity: 1; }
+  .goal-card.done::before { background: var(--green); }
+  .goal-card.prio-high::before { background: var(--p-high); opacity: 1; }
+  .goal-card.prio-med::before { background: var(--p-med); opacity: 1; }
+  .goal-card.prio-low::before { background: var(--p-low); opacity: 1; }
   .goal-card.done::before { background: var(--green) !important; }
 
   .goal-card-header { display: flex; align-items: center; gap: 12px; }
@@ -261,6 +262,7 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- NAGŁÓWEK -->
 <div class="header" id="mainHeader">
   <div class="header-top">
     <h1>Cele na rok</h1>
@@ -277,12 +279,13 @@
   </div>
 </div>
 
+<!-- STRONA: CELE -->
 <div class="page active" id="page-goals">
   <div style="padding: 14px 16px 0;">
     <div class="filter-row" id="filterRow">
       <button class="filter-chip active" data-cat="all" onclick="filterGoals(this)">Wszystkie</button>
       <button class="filter-chip" data-cat="travel" onclick="filterGoals(this)">✈️ Podróże</button>
-      <button class="filter-chip" data-cat="health" onclick="filterGoals(this)">🏥 Zdrowie</button>
+      <button class="filter-chip" data-cat="health" onclick="filterGoals(this)">💪 Zdrowie</button>
     </div>
   </div>
 
@@ -298,14 +301,15 @@
   <div style="height: 20px;"></div>
 </div>
 
+<!-- STRONA: STATYSTYKI -->
 <div class="page" id="page-stats">
   <div class="stats-page">
     <h2>📊 Statystyki</h2>
     <div class="stats-grid">
       <div class="stat-card accent"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Wszystkich celów</div></div>
-      <div class="stat-card green"><div class="stat-val" id="statDone">0</div><div class="stat-label">Ukończonych</div></div>
+      <div class="stat-card green"><div class="stat-val" id="statDone">0</div><div class="stat-label">Wykonanych</div></div>
       <div class="stat-card gold"><div class="stat-val" id="statInProgress">0</div><div class="stat-label">W trakcie</div></div>
-      <div class="stat-card blue"><div class="stat-val" id="statSubtasks">0</div><div class="stat-label">Podzadań ukończonych</div></div>
+      <div class="stat-card blue"><div class="stat-val" id="statSubtasks">0</div><div class="stat-label">Ukończonych kroków</div></div>
     </div>
     <div class="progress-circle" id="statsRing"></div>
     <div id="statsExtra" style="display:flex;flex-direction:column;gap:10px;"></div>
@@ -313,8 +317,10 @@
   </div>
 </div>
 
+<!-- FAB -->
 <button class="fab" onclick="openAddModal()">＋</button>
 
+<!-- DOLNA NAWIGACJA -->
 <div class="bottom-nav">
   <button class="nav-btn active" id="nav-goals" onclick="showPage('goals')">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -326,7 +332,7 @@
   </button>
 </div>
 
-<!-- DETAIL MODAL -->
+<!-- MODAL SZCZEGÓŁÓW -->
 <div class="modal-overlay" id="detailModal">
   <div class="modal" id="detailModalContent">
     <div class="modal-handle"></div>
@@ -347,7 +353,7 @@
   </div>
 </div>
 
-<!-- ADD GOAL MODAL -->
+<!-- MODAL DODAWANIA CELU -->
 <div class="modal-overlay" id="addModal">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -361,7 +367,7 @@
     <div class="modal-body">
       <div class="form-group">
         <div class="input-label">Nazwa celu</div>
-        <input class="input-field" id="newGoalTitle" placeholder="Np.: Nauczyć się angielskiego" />
+        <input class="input-field" id="newGoalTitle" placeholder="Np. Nauczyć się angielskiego" />
       </div>
       <div class="form-group">
         <div class="input-label">Ikona</div>
@@ -370,11 +376,11 @@
       <div class="form-group">
         <div class="input-label">Kategoria</div>
         <select class="input-field" id="newGoalCat">
-          <option value="travel">✈️ Podróże</option>
-          <option value="health">🏥 Zdrowie</option>
           <option value="documents">📄 Dokumenty</option>
           <option value="family">👨‍👩‍👦 Rodzina</option>
+          <option value="health">💪 Zdrowie</option>
           <option value="finance">💰 Finanse</option>
+          <option value="travel">✈️ Podróże</option>
           <option value="career">🚀 Kariera</option>
           <option value="other">⭐ Inne</option>
         </select>
@@ -391,14 +397,14 @@
       <div class="form-group">
         <div class="input-label">Typ śledzenia</div>
         <select class="input-field" id="newGoalType" onchange="toggleCounterTarget()">
-          <option value="checkbox">✅ Wykonane / Niewykonane</option>
+          <option value="checkbox">✅ Wykonane / Nie wykonane</option>
           <option value="counter">🔢 Licznik</option>
-          <option value="checklist">📋 Lista zadań</option>
+          <option value="checklist">📋 Lista kroków</option>
         </select>
       </div>
       <div id="counterTargetGroup" style="display:none;" class="form-group">
-        <div class="input-label">Ile razy potrzeba?</div>
-        <input class="input-field" id="newGoalTarget" type="number" min="1" max="365" placeholder="Np.: 4" value="4" />
+        <div class="input-label">Ile razy?</div>
+        <input class="input-field" id="newGoalTarget" type="number" min="1" max="365" placeholder="Np. 4" value="4" />
       </div>
       <div class="form-group">
         <div class="input-label">Termin (opcjonalnie)</div>
@@ -414,13 +420,14 @@
 </div>
 
 <script>
+// ─── DANE ───────────────────────────────────────────
 let goals = JSON.parse(localStorage.getItem('goals2026pl') || 'null');
 
 if (!goals) {
   goals = [
     {
       id: 1,
-      title: 'Min. 4 razy pojechać na wakacje',
+      title: 'Minimum 4 razy wyjechać na wypoczynek',
       icon: '✈️',
       category: 'travel',
       type: 'counter',
@@ -453,6 +460,7 @@ if (!goals) {
   save();
 }
 
+// Migracja danych
 goals.forEach(g => {
   if (!g.priority) g.priority = 'none';
   if (g.deadline === undefined) g.deadline = '';
@@ -460,16 +468,8 @@ goals.forEach(g => {
 });
 
 const EMOJIS = ['🎯','🏆','💡','🔥','⚡','🌟','💎','🚀','🛂','📋','🚗','🛍️','✈️','🌿','🏥','💪','💼','🎥','🌐','👶','💰','📚','🎓','🎵','🏠','❤️','🤝','🎁','🌈','🦁'];
-const CAT_NAMES = {
-  documents: '📄 Dokumenty',
-  family: '👨‍👩‍👦 Rodzina',
-  health: '🏥 Zdrowie',
-  finance: '💰 Finanse',
-  travel: '✈️ Podróże',
-  career: '🚀 Kariera',
-  other: '⭐ Inne'
-};
-const PRIO_ORDER = { high: 0, med: 1, low: 2, none: 3 };
+const CAT_NAMES = { documents:'📄 Dokumenty', family:'👨‍👩‍👦 Rodzina', health:'💪 Zdrowie', finance:'💰 Finanse', travel:'✈️ Podróże', career:'🚀 Kariera', other:'⭐ Inne' };
+const PRIO_ORDER = { high:0, med:1, low:2, none:3 };
 
 let selectedEmoji = '🎯';
 let selectedNewPrio = 'med';
@@ -480,6 +480,7 @@ let pendingCounterChange = 0;
 
 function save() { localStorage.setItem('goals2026pl', JSON.stringify(goals)); }
 
+// ─── SORTOWANIE ─────────────────────────────────────
 function setSort(type, btn) {
   currentSort = type;
   document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
@@ -490,24 +491,29 @@ function setSort(type, btn) {
 function getSortedGoals(list) {
   const active = list.filter(g => !g.done);
   const done = list.filter(g => g.done);
-  if (currentSort === 'priority') active.sort((a, b) => PRIO_ORDER[a.priority || 'none'] - PRIO_ORDER[b.priority || 'none']);
-  else if (currentSort === 'progress') active.sort((a, b) => getGoalProgress(b) - getGoalProgress(a));
-  else if (currentSort === 'deadline') active.sort((a, b) => {
-    if (!a.deadline && !b.deadline) return 0;
-    if (!a.deadline) return 1;
-    if (!b.deadline) return -1;
-    return new Date(a.deadline) - new Date(b.deadline);
-  });
+  if (currentSort === 'priority') {
+    active.sort((a,b) => PRIO_ORDER[a.priority||'none'] - PRIO_ORDER[b.priority||'none']);
+  } else if (currentSort === 'progress') {
+    active.sort((a,b) => getGoalProgress(b) - getGoalProgress(a));
+  } else if (currentSort === 'deadline') {
+    active.sort((a,b) => {
+      if (!a.deadline && !b.deadline) return 0;
+      if (!a.deadline) return 1;
+      if (!b.deadline) return -1;
+      return new Date(a.deadline) - new Date(b.deadline);
+    });
+  }
   return { active, done };
 }
 
+// ─── RENDEROWANIE ────────────────────────────────────
 function renderGoals() {
   const list = document.getElementById('goalsList');
   const filtered = currentFilter === 'all' ? goals : goals.filter(g => g.category === currentFilter);
   const { active, done } = getSortedGoals(filtered);
   let html = active.map(g => goalCardHTML(g)).join('');
   if (done.length) {
-    html += `<div class="divider-label" style="padding:8px 4px 0;">✅ Ukończone (${done.length})</div>`;
+    html += `<div class="divider-label" style="padding:8px 4px 0;">✅ Wykonane (${done.length})</div>`;
     html += done.map(g => goalCardHTML(g)).join('');
   }
   list.innerHTML = html;
@@ -516,42 +522,35 @@ function renderGoals() {
 
 function deadlineBadgeHTML(g) {
   if (!g.deadline || g.done) return '';
-  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const now = new Date(); now.setHours(0,0,0,0);
   const dl = new Date(g.deadline);
   const diff = Math.ceil((dl - now) / 86400000);
-  if (diff < 0) return `<div class="deadline-badge overdue">⚠️ Przeterminowane ${Math.abs(diff)} dni</div>`;
-  if (diff <= 7) return `<div class="deadline-badge soon">⏰ ${diff} dni pozostało</div>`;
-  return `<div class="deadline-badge">📅 ${dl.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' })}</div>`;
+  if (diff < 0) return `<div class="deadline-badge overdue">⚠️ Termin minął ${Math.abs(diff)} dni temu</div>`;
+  if (diff <= 7) return `<div class="deadline-badge soon">⏰ Pozostało ${diff} dni</div>`;
+  return `<div class="deadline-badge">📅 ${dl.toLocaleDateString('pl-PL',{day:'numeric',month:'short'})}</div>`;
 }
 
 function goalCardHTML(g) {
   let metaHTML = '', extraHTML = '';
   const prioClass = g.priority && g.priority !== 'none' ? `prio-${g.priority}` : '';
-  const prioLabel = { high: '🔴 Wysoki', med: '🟡 Średni', low: '🔵 Niski' };
-  const prioBadge = g.priority && g.priority !== 'none' ? `<span class="prio-badge ${g.priority}">${prioLabel[g.priority]}</span>` : '';
+  const prioBadge = g.priority && g.priority !== 'none' ? `<span class="prio-badge ${g.priority}">${g.priority==='high'?'🔴 Wysoki':g.priority==='med'?'🟡 Średni':'🔵 Niski'}</span>` : '';
 
   if (g.type === 'counter') {
     const left = g.target - g.current;
-    metaHTML = g.done
-      ? `<span class="done-text">✅ Ukończono ${g.target}/${g.target}</span>`
-      : g.current > 0
-        ? `<span class="highlight">${g.current} z ${g.target}</span> — pozostało ${left}`
-        : `Potrzeba: ${g.target} razy`;
+    metaHTML = g.done ? `<span class="done-text">✅ Wykonane ${g.target}/${g.target}</span>` : g.current > 0 ? `<span class="highlight">${g.current} z ${g.target}</span> — pozostało ${left}` : `Wymagane: ${g.target} razy`;
     const max = Math.min(g.target, 12);
     let dots = '';
     for (let i = 0; i < max; i++) dots += `<div class="counter-dot ${i < g.current ? 'filled' : ''}">${i < g.current ? '✓' : ''}</div>`;
-    if (g.target > 12) dots += `<div class="counter-dot" style="font-size:8px;">+${g.target - 12}</div>`;
+    if (g.target > 12) dots += `<div class="counter-dot" style="font-size:8px;">+${g.target-12}</div>`;
     extraHTML = `<div class="counter-mini">${dots}</div>`;
   } else if (g.type === 'checklist') {
     const total = g.subtasks.length;
     const doneCount = g.subtasks.filter(s => s.done).length;
-    metaHTML = g.done
-      ? `<span class="done-text">✅ Wszystkie zadania ukończone</span>`
-      : total > 0 ? `${doneCount} z ${total} kroków ukończono` : 'Brak zadań';
+    metaHTML = g.done ? `<span class="done-text">✅ Wszystkie kroki wykonane</span>` : total > 0 ? `${doneCount} z ${total} kroków wykonanych` : 'Brak kroków';
     const preview = g.subtasks.slice(0, 3);
-    if (preview.length) extraHTML = `<div class="subtasks-mini">${preview.map(s => `<div class="subtask-mini-row"><div class="subtask-mini-dot ${s.done ? 'done' : ''}"></div><span class="subtask-mini-text ${s.done ? 'done' : ''}">${s.text}</span></div>`).join('')}${g.subtasks.length > 3 ? `<div class="subtask-mini-row"><div class="subtask-mini-dot"></div><span class="subtask-mini-text" style="color:var(--text3)">jeszcze ${g.subtasks.length - 3}...</span></div>` : ''}</div>`;
+    if (preview.length) extraHTML = `<div class="subtasks-mini">${preview.map(s=>`<div class="subtask-mini-row"><div class="subtask-mini-dot ${s.done?'done':''}"></div><span class="subtask-mini-text ${s.done?'done':''}">${s.text}</span></div>`).join('')}${g.subtasks.length>3?`<div class="subtask-mini-row"><div class="subtask-mini-dot"></div><span class="subtask-mini-text" style="color:var(--text3)">jeszcze ${g.subtasks.length-3}...</span></div>`:''}</div>`;
   } else {
-    metaHTML = g.done ? `<span class="done-text">✅ Ukończono</span>` : 'Kliknij, aby oznaczyć';
+    metaHTML = g.done ? `<span class="done-text">✅ Wykonane</span>` : 'Kliknij, żeby oznaczyć';
   }
 
   const hasProgress = g.type === 'counter' ? g.current > 0 : g.subtasks.some(s => s.done);
@@ -574,6 +573,7 @@ function goalCardHTML(g) {
   </div>`;
 }
 
+// ─── SZCZEGÓŁY ───────────────────────────────────────
 function openDetail(id) {
   const g = goals.find(x => x.id === id);
   if (!g) return;
@@ -587,26 +587,26 @@ function openDetail(id) {
   const body = document.getElementById('detailBody');
   let html = '';
 
-  const prioLabels = { high: '🔴 Wysoki', med: '🟡 Średni', low: '🔵 Niski', none: '⚪ Brak' };
+  const prioLabels = { high:'🔴 Wysoki', med:'🟡 Średni', low:'🔵 Niski', none:'⚪ Brak' };
   html += `<div>
     <div class="section-title" style="margin-bottom:8px;">⚡ Priorytet</div>
     <div class="prio-selector">
-      ${['high', 'med', 'low', 'none'].map(p => `<button class="prio-opt ${g.priority === p ? 'sel-' + p : ''}" onclick="setGoalPriority(${id},'${p}', this)">${prioLabels[p]}</button>`).join('')}
+      ${['high','med','low','none'].map(p=>`<button class="prio-opt ${g.priority===p?'sel-'+p:''}" onclick="setGoalPriority(${id},'${p}', this)">${prioLabels[p]}</button>`).join('')}
     </div>
   </div>`;
 
   html += `<div class="form-group">
     <div class="section-title" style="margin-bottom:8px;">📅 Termin</div>
-    <input class="input-field" type="date" style="color-scheme:dark;" value="${g.deadline || ''}" onchange="setGoalDeadline(${id}, this.value)" />
+    <input class="input-field" type="date" style="color-scheme:dark;" value="${g.deadline||''}" onchange="setGoalDeadline(${id}, this.value)" />
   </div>`;
 
   if (g.type === 'counter') {
     const pct = g.target > 0 ? Math.round((g.current / g.target) * 100) : 0;
     let dots = '';
-    for (let i = 0; i < g.target; i++) dots += `<div class="counter-dot-lg ${i < g.current ? 'filled' : ''}" onclick="toggleCounterDot(${id}, ${i})">${i < g.current ? '✓' : i + 1}</div>`;
+    for (let i = 0; i < g.target; i++) dots += `<div class="counter-dot-lg ${i < g.current ? 'filled' : ''}" onclick="toggleCounterDot(${id}, ${i})">${i < g.current ? '✓' : i+1}</div>`;
 
     html += `<div class="counter-section">
-      <h3>Postęp — naciśnij + a potem "Potwierdź"</h3>
+      <h3>Postęp — kliknij + a potem "Zatwierdź"</h3>
       <div class="counter-display">
         <button class="counter-btn minus" onclick="changeCounter(${id}, -1)">−</button>
         <div style="text-align:center;">
@@ -618,10 +618,10 @@ function openDetail(id) {
       <div class="counter-dots" id="counterDots_${id}">${dots}</div>
       <div style="margin-top:14px;">
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);font-weight:600;margin-bottom:6px;"><span>Postęp</span><span id="counterPct_${id}">${pct}%</span></div>
-        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="counterBar_${id}" style="width:${pct}%;background:${pct === 100 ? 'var(--green)' : 'linear-gradient(90deg,var(--accent),var(--accent2))'}"></div></div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="counterBar_${id}" style="width:${pct}%;background:${pct===100?'var(--green)':'linear-gradient(90deg,var(--accent),var(--accent2))'}"></div></div>
       </div>
       <button class="counter-confirm-btn ${pendingCounterChange > 0 ? 'pulse' : ''}" id="confirmBtn_${id}" onclick="confirmCounter(${id})" ${pendingCounterChange === 0 ? 'disabled' : ''}>
-        ✅ Potwierdź +${pendingCounterChange}
+        ✅ Zatwierdź +${pendingCounterChange}
       </button>
     </div>`;
 
@@ -643,10 +643,10 @@ function openDetail(id) {
         <div style="font-size:12px;color:var(--text2);font-weight:700;">${pct}%</div>
       </div>
       <div class="progress-bar-wrap" style="margin-bottom:12px;">
-        <div class="progress-bar-fill" style="width:${pct}%;background:${pct === 100 ? 'var(--green)' : 'linear-gradient(90deg,var(--accent),var(--accent2))'}"></div>
+        <div class="progress-bar-fill" style="width:${pct}%;background:${pct===100?'var(--green)':'linear-gradient(90deg,var(--accent),var(--accent2))'}"></div>
       </div>
-      ${g.subtasks.map(s => `<div class="subtask-row ${s.done ? 'done-task' : ''}" onclick="toggleSubtask(${id},${s.id})">
-        <div class="check-box ${s.done ? 'checked' : ''}">${s.done ? '✓' : ''}</div>
+      ${g.subtasks.map(s=>`<div class="subtask-row ${s.done?'done-task':''}" onclick="toggleSubtask(${id},${s.id})">
+        <div class="check-box ${s.done?'checked':''}">${s.done?'✓':''}</div>
         <span class="subtask-text">${s.text}</span>
         <button class="subtask-delete-btn" onclick="event.stopPropagation();deleteSubtask(${id},${s.id})">✕</button>
       </div>`).join('')}
@@ -660,10 +660,10 @@ function openDetail(id) {
 
   html += `<div>
     <div class="section-title" style="margin-bottom:8px;">✏️ Notatki</div>
-    <textarea class="notes-textarea" id="notesField${id}" placeholder="Dodaj notatki..." onblur="saveNotes(${id})">${g.notes || ''}</textarea>
+    <textarea class="notes-textarea" id="notesField${id}" placeholder="Dodaj notatki..." onblur="saveNotes(${id})">${g.notes||''}</textarea>
   </div>`;
 
-  html += `<button class="${g.done ? 'complete-btn undo-btn' : 'complete-btn'}" onclick="toggleGoalDone(${id})">${g.done ? '↩ Przywróć cel' : '✅ Oznacz jako ukończony'}</button>`;
+  html += `<button class="${g.done?'complete-btn undo-btn':'complete-btn'}" onclick="toggleGoalDone(${id})">${g.done?'↩ Przywróć cel':'✅ Oznacz jako wykonany'}</button>`;
   html += `<div id="deleteConfirmArea${id}"></div>`;
   html += `<div style="height:8px;"></div>`;
 
@@ -676,11 +676,13 @@ function closeModal(id) {
   if (id === 'detailModal') { renderGoals(); updateStats(); }
 }
 
+// ─── LICZNIK ─────────────────────────────────────────
 function changeCounter(goalId, delta) {
   const g = goals.find(x => x.id === goalId);
   if (!g) return;
   const newVal = Math.max(0, Math.min(g.target, g.current + pendingCounterChange + delta));
-  pendingCounterChange = Math.max(0, newVal - g.current);
+  const newPending = newVal - g.current;
+  pendingCounterChange = Math.max(0, newPending);
 
   const numEl = document.getElementById(`counterNum_${goalId}`);
   const pctEl = document.getElementById(`counterPct_${goalId}`);
@@ -693,15 +695,15 @@ function changeCounter(goalId, delta) {
 
   if (numEl) numEl.textContent = displayVal;
   if (pctEl) pctEl.textContent = pct + '%';
-  if (barEl) { barEl.style.width = pct + '%'; barEl.style.background = pct === 100 ? 'var(--green)' : 'linear-gradient(90deg,var(--accent),var(--accent2))'; }
+  if (barEl) { barEl.style.width = pct + '%'; barEl.style.background = pct===100?'var(--green)':'linear-gradient(90deg,var(--accent),var(--accent2))'; }
   if (btnEl) {
-    btnEl.textContent = pendingCounterChange > 0 ? `✅ Potwierdź +${pendingCounterChange}` : '✅ Potwierdź';
+    btnEl.textContent = pendingCounterChange > 0 ? `✅ Zatwierdź +${pendingCounterChange}` : '✅ Zatwierdź';
     btnEl.disabled = pendingCounterChange === 0;
     if (pendingCounterChange > 0) btnEl.classList.add('pulse'); else btnEl.classList.remove('pulse');
   }
   if (dotsEl) {
     let dots = '';
-    for (let i = 0; i < g.target; i++) dots += `<div class="counter-dot-lg ${i < displayVal ? 'filled' : ''}" onclick="toggleCounterDot(${goalId}, ${i})">${i < displayVal ? '✓' : i + 1}</div>`;
+    for (let i = 0; i < g.target; i++) dots += `<div class="counter-dot-lg ${i < displayVal ? 'filled' : ''}" onclick="toggleCounterDot(${goalId}, ${i})">${i < displayVal ? '✓' : i+1}</div>`;
     dotsEl.innerHTML = dots;
   }
 }
@@ -710,7 +712,7 @@ function confirmCounter(goalId) {
   const g = goals.find(x => x.id === goalId);
   if (!g || pendingCounterChange === 0) return;
   g.current = Math.min(g.target, g.current + pendingCounterChange);
-  if (g.current >= g.target) { g.done = true; showToast('🎉 Cel ukończony!'); }
+  if (g.current >= g.target) { g.done = true; showToast('🎉 Cel wykonany!'); }
   else showToast(`✅ +${pendingCounterChange} zapisano! Pozostało ${g.target - g.current}`);
   pendingCounterChange = 0;
   save();
@@ -723,18 +725,19 @@ function toggleCounterDot(goalId, index) {
   pendingCounterChange = 0;
   if (index === g.current - 1) g.current = Math.max(0, g.current - 1);
   else g.current = index + 1;
-  if (g.current >= g.target) { g.done = true; showToast('🎉 Cel ukończony!'); }
+  if (g.current >= g.target) { g.done = true; showToast('🎉 Cel wykonany!'); }
   save();
   openDetail(goalId);
 }
 
+// ─── PODZADANIA ──────────────────────────────────────
 function toggleSubtask(goalId, subtaskId) {
   const g = goals.find(x => x.id === goalId);
   if (!g) return;
   const s = g.subtasks.find(x => x.id === subtaskId);
   if (s) s.done = !s.done;
   const allDone = g.subtasks.length > 0 && g.subtasks.every(s => s.done);
-  if (allDone) { g.done = true; showToast('🎉 Wszystkie kroki ukończone!'); } else g.done = false;
+  if (allDone) { g.done = true; showToast('🎉 Wszystkie kroki wykonane!'); } else g.done = false;
   save(); openDetail(goalId);
 }
 
@@ -776,10 +779,11 @@ function toggleGoalDone(goalId) {
   if (g.done && g.type === 'counter') g.current = g.target;
   if (!g.done && g.type === 'counter') g.current = Math.min(g.current, g.target - 1);
   save();
-  showToast(g.done ? '🎉 Cel ukończony!' : 'Cel przywrócony');
+  showToast(g.done ? '🎉 Cel wykonany!' : 'Cel przywrócony');
   closeModal('detailModal');
 }
 
+// ─── PRIORYTET / TERMIN ──────────────────────────────
 function setGoalPriority(goalId, prio, btn) {
   const g = goals.find(x => x.id === goalId);
   if (!g) return;
@@ -787,7 +791,7 @@ function setGoalPriority(goalId, prio, btn) {
   save();
   btn.closest('.prio-selector').querySelectorAll('.prio-opt').forEach(b => {
     b.className = 'prio-opt';
-    if (b === btn) b.classList.add('sel-' + prio);
+    if (b === btn) b.classList.add('sel-'+prio);
   });
   showToast('Priorytet zapisany');
 }
@@ -800,13 +804,14 @@ function setGoalDeadline(goalId, val) {
   showToast('Termin zapisany');
 }
 
+// ─── USUWANIE ────────────────────────────────────────
 function promptDeleteGoal() {
   if (!currentGoalId) return;
   const id = currentGoalId;
   const area = document.getElementById(`deleteConfirmArea${id}`);
   if (!area) return;
   area.innerHTML = `<div class="delete-confirm-box">
-    <p>🗑 Usunąć ten cel na zawsze?</p>
+    <p>🗑 Usunąć ten cel na stałe?</p>
     <div class="delete-confirm-row">
       <button class="btn-cancel" onclick="document.getElementById('deleteConfirmArea${id}').innerHTML=''">Anuluj</button>
       <button class="btn-delete-confirm" onclick="deleteGoal(${id})">Tak, usuń</button>
@@ -822,6 +827,7 @@ function deleteGoal(id) {
   closeModal('detailModal');
 }
 
+// ─── POSTĘP ──────────────────────────────────────────
 function getGoalProgress(g) {
   if (g.done) return 1;
   if (g.type === 'counter') return g.target > 0 ? g.current / g.target : 0;
@@ -837,6 +843,7 @@ function updateOverallProgress() {
   document.getElementById('overallPercent').textContent = pct + '%';
 }
 
+// ─── STATYSTYKI ──────────────────────────────────────
 function updateStats() {
   document.getElementById('statTotal').textContent = goals.length;
   document.getElementById('statDone').textContent = goals.filter(g => g.done).length;
@@ -851,9 +858,117 @@ function updateStats() {
   const total = goals.length, done = goals.filter(g => g.done).length;
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   const r = 30, circ = 2 * Math.PI * r, offset = circ - (pct / 100) * circ;
-  document.getElementById('statsRing').innerHTML = `<svg class="circle-svg" width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="${r}" fill="none" stroke="var(--surface3)" stroke-width="7"/><circle cx="40" cy="40" r="${r}" fill="none" stroke="${pct === 100 ? 'var(--green)' : 'var(--accent)'}" stroke-width="7" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round" transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 0.6s"/><text x="40" y="46" text-anchor="middle" fill="white" font-size="14" font-weight="900" font-family="Manrope">${pct}%</text></svg><div class="circle-info"><h3>Ogólny postęp</h3><p>${done} z ${total} celów ukończonych</p></div>`;
+  document.getElementById('statsRing').innerHTML = `<svg class="circle-svg" width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="40" r="${r}" fill="none" stroke="var(--surface3)" stroke-width="7"/><circle cx="40" cy="40" r="${r}" fill="none" stroke="${pct===100?'var(--green)':'var(--accent)'}" stroke-width="7" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round" transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 0.6s"/><text x="40" y="46" text-anchor="middle" fill="white" font-size="14" font-weight="900" font-family="Manrope">${pct}%</text></svg><div class="circle-info"><h3>Ogólny postęp</h3><p>${done} z ${total} celów wykonanych</p></div>`;
 
-  const highDone = goals.filter(g => g.priority === 'high' && g.done).length, highTotal = goals.filter(g => g.priority === 'high').length;
-  const medDone = goals.filter(g => g.priority === 'med' && g.done).length, medTotal = goals.f
-Done
-Taking longer than usual.
+  const highDone = goals.filter(g=>g.priority==='high'&&g.done).length, highTotal = goals.filter(g=>g.priority==='high').length;
+  const medDone = goals.filter(g=>g.priority==='med'&&g.done).length, medTotal = goals.filter(g=>g.priority==='med').length;
+  document.getElementById('statsExtra').innerHTML = `
+    <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.8px;">Wg priorytetu</div>
+    <div style="display:flex;gap:10px;">
+      <div style="flex:1;background:rgba(255,79,79,0.1);border:1px solid rgba(255,79,79,0.2);border-radius:14px;padding:12px;text-align:center;">
+        <div style="font-size:22px;font-weight:900;color:var(--p-high);">${highDone}/${highTotal}</div>
+        <div style="font-size:11px;color:var(--text2);font-weight:600;">🔴 Wysoki</div>
+      </div>
+      <div style="flex:1;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.2);border-radius:14px;padding:12px;text-align:center;">
+        <div style="font-size:22px;font-weight:900;color:var(--p-med);">${medDone}/${medTotal}</div>
+        <div style="font-size:11px;color:var(--text2);font-weight:600;">🟡 Średni</div>
+      </div>
+    </div>`;
+
+  document.getElementById('statsGoalsList').innerHTML = goals.map(g => {
+    const pct2 = Math.round(getGoalProgress(g) * 100);
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 14px;cursor:pointer;" onclick="showPage('goals');openDetail(${g.id})">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span style="font-size:20px;">${g.icon}</span>
+        <span style="font-size:13px;font-weight:700;flex:1;">${g.title}</span>
+        <span style="font-size:12px;font-weight:800;color:${pct2===100?'var(--green)':pct2>0?'var(--accent2)':'var(--text3)'};">${pct2}%</span>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct2}%;background:${pct2===100?'var(--green)':'linear-gradient(90deg,var(--accent),var(--accent2))'}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ─── DODAJ CEL ───────────────────────────────────────
+function openAddModal() {
+  selectedNewPrio = 'med';
+  const grid = document.getElementById('emojiGrid');
+  grid.innerHTML = EMOJIS.map(e => `<button class="emoji-btn ${e===selectedEmoji?'selected':''}" onclick="selectEmoji('${e}', this)">${e}</button>`).join('');
+  document.querySelectorAll('#newGoalPrioSelector .prio-opt').forEach(b => {
+    b.className = 'prio-opt';
+    if (b.dataset.prio === 'med') b.classList.add('sel-med');
+  });
+  document.getElementById('addModal').classList.add('open');
+}
+
+function selectEmoji(emoji, btn) {
+  selectedEmoji = emoji;
+  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function selectPrio(prio, btn) {
+  selectedNewPrio = prio;
+  document.querySelectorAll('#newGoalPrioSelector .prio-opt').forEach(b => b.className = 'prio-opt');
+  btn.classList.add('sel-' + prio);
+}
+
+function toggleCounterTarget() {
+  document.getElementById('counterTargetGroup').style.display = document.getElementById('newGoalType').value === 'counter' ? 'flex' : 'none';
+}
+
+function saveNewGoal() {
+  const title = document.getElementById('newGoalTitle').value.trim();
+  if (!title) { showToast('⚠️ Wpisz nazwę celu'); return; }
+  const type = document.getElementById('newGoalType').value;
+  const newGoal = {
+    id: Date.now(), title, icon: selectedEmoji,
+    category: document.getElementById('newGoalCat').value,
+    type, done: false,
+    notes: document.getElementById('newGoalNotes').value.trim(),
+    priority: selectedNewPrio,
+    deadline: document.getElementById('newGoalDeadline').value || '',
+    subtasks: [], current: 0,
+    target: type === 'counter' ? parseInt(document.getElementById('newGoalTarget').value) || 4 : 0
+  };
+  goals.push(newGoal);
+  save(); renderGoals(); updateStats();
+  closeModal('addModal');
+  showToast('🎯 Cel dodany!');
+  document.getElementById('newGoalTitle').value = '';
+  document.getElementById('newGoalNotes').value = '';
+  document.getElementById('newGoalDeadline').value = '';
+}
+
+// ─── FILTR ───────────────────────────────────────────
+function filterGoals(btn) {
+  currentFilter = btn.dataset.cat;
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGoals();
+}
+
+// ─── NAWIGACJA ───────────────────────────────────────
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('nav-' + page).classList.add('active');
+  if (page === 'stats') updateStats();
+  if (page === 'goals') renderGoals();
+}
+
+// ─── TOAST ───────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ─── INIT ─────────────────────────────────────────────
+renderGoals();
+updateStats();
+</script>
+</body>
+</html>
